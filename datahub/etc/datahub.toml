@@ -18,4 +18,10 @@ bindAddress = ":50050"
     outputLevel = "info" # debug, info, warn, error, fatal, none
 
 [weavescope]
-  url = "http://127.0.0.1:4040"
+    url = "http://127.0.0.1:4040"
+
+[rabbitmq]
+    url = "amqp://admin:adminpass@rabbitmq.alameda.svc.cluster.local:5672"
+    [retry]
+        publishTime = 3
+        publishIntervalMs = 500
