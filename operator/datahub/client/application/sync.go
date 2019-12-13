@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	autoscalingv1alpha1 "github.com/containers-ai/alameda/operator/pkg/apis/autoscaling/v1alpha1"
+	autoscalingv1alpha1 "github.com/containers-ai/alameda/operator/api/v1alpha1"
+	k8sutils "github.com/containers-ai/alameda/pkg/utils/kubernetes"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -18,11 +19,17 @@ func SyncWithDatahub(client client.Client, conn *grpc.ClientConn) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	applicationList := autoscalingv1alpha1.AlamedaScalerList{}
-	if err := client.List(ctx, nil, &applicationList); err != nil {
+	if err := client.List(ctx, &applicationList); err != nil {
 		return errors.Errorf(
 			"Sync applications with datahub failed due to list applications from cluster failed: %s", err.Error())
 	}
-	datahubApplicationRepo := NewApplicationRepository(conn)
+
+	clusterUID, err := k8sutils.GetClusterUID(client)
+	if err != nil {
+		return errors.Wrap(err, "get cluster uid failed")
+	}
+
+	datahubApplicationRepo := NewApplicationRepository(conn, clusterUID)
 	if len(applicationList.Items) > 0 {
 		if err := datahubApplicationRepo.CreateApplications(applicationList.Items); err != nil {
 			return fmt.Errorf(
@@ -43,16 +50,16 @@ func SyncWithDatahub(client client.Client, conn *grpc.ClientConn) error {
 			"Sync applications with datahub failed due to list applications from datahub failed: %s",
 			err.Error())
 	}
-	applicationsNeedDeleting := make([]*datahub_resources.Application, 0)
+	applicationsNeedDeleting := make([]*datahub_resources.ObjectMeta, 0)
 	for _, n := range applicationsFromDatahub {
 		if _, exist := existingApplicationMap[fmt.Sprintf("%s/%s",
 			n.GetObjectMeta().GetNamespace(), n.GetObjectMeta().GetName())]; exist {
 			continue
 		}
-		applicationsNeedDeleting = append(applicationsNeedDeleting, n)
+		applicationsNeedDeleting = append(applicationsNeedDeleting, n.ObjectMeta)
 	}
 	if len(applicationsNeedDeleting) > 0 {
-		err = datahubApplicationRepo.DeleteApplications(applicationsNeedDeleting)
+		err = datahubApplicationRepo.DeleteApplications(context.TODO(), applicationsNeedDeleting)
 		if err != nil {
 			return errors.Wrap(err, "delete applications from Datahub failed")
 		}

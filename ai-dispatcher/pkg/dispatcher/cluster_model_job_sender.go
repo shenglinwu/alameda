@@ -15,7 +15,6 @@ import (
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 )
 
@@ -36,28 +35,29 @@ func NewClusterModelJobSender(datahubGrpcCn *grpc.ClientConn, modelMapper *Model
 
 func (sender *clusterModelJobSender) sendModelJobs(clusters []*datahub_resources.Cluster,
 	queueSender queue.QueueSender, pdUnit string, granularity int64, predictionStep int64) {
-
-	datahubServiceClnt := datahub_v1alpha1.NewDatahubServiceClient(sender.datahubGrpcCn)
 	for _, cluster := range clusters {
-		if granularity == 30 && !viper.GetBool("hourlyPredict") {
-			continue
-		}
-
-		clusterName := cluster.GetObjectMeta().GetName()
-		lastPredictionMetrics, err := sender.getLastPrediction(datahubServiceClnt, cluster, granularity)
-		if err != nil {
-			scope.Infof("Get cluster %s last prediction failed: %s",
-				clusterName, err.Error())
-			continue
-		}
-		if lastPredictionMetrics == nil && err == nil {
-			scope.Infof("No prediction found of cluster %s",
-				clusterName)
-		}
-
-		sender.sendJobByMetrics(cluster, queueSender, pdUnit, granularity, predictionStep,
-			datahubServiceClnt, lastPredictionMetrics)
+		go sender.sendClusterModelJobs(cluster, queueSender, pdUnit, granularity, predictionStep)
 	}
+}
+
+func (sender *clusterModelJobSender) sendClusterModelJobs(cluster *datahub_resources.Cluster,
+	queueSender queue.QueueSender, pdUnit string, granularity int64, predictionStep int64) {
+	dataGranularity := queue.GetGranularityStr(granularity)
+	datahubServiceClnt := datahub_v1alpha1.NewDatahubServiceClient(sender.datahubGrpcCn)
+	clusterName := cluster.GetObjectMeta().GetName()
+	lastPredictionMetrics, err := sender.getLastMIdPrediction(datahubServiceClnt, cluster, granularity)
+	if err != nil {
+		scope.Infof("[CLUSTER][%s][%s] Get last prediction failed: %s",
+			dataGranularity, clusterName, err.Error())
+		return
+	}
+	if lastPredictionMetrics == nil && err == nil {
+		scope.Infof("[CLUSTER][%s][%s] No prediction found",
+			dataGranularity, clusterName)
+	}
+
+	sender.sendJobByMetrics(cluster, queueSender, pdUnit, granularity, predictionStep,
+		datahubServiceClnt, lastPredictionMetrics)
 }
 
 func (sender *clusterModelJobSender) sendJob(cluster *datahub_resources.Cluster, queueSender queue.QueueSender, pdUnit string,
@@ -67,8 +67,8 @@ func (sender *clusterModelJobSender) sendJob(cluster *datahub_resources.Cluster,
 	marshaler := jsonpb.Marshaler{}
 	clusterStr, err := marshaler.MarshalToString(cluster)
 	if err != nil {
-		scope.Errorf("Encode pb message failed for cluster %s with granularity seconds %v. %s",
-			clusterName, granularity, err.Error())
+		scope.Errorf("[CLUSTER][%s][%s] Encode pb message failed. %s",
+			dataGranularity, clusterName, err.Error())
 		return
 	}
 	if len(clusterInfo.ModelMetrics) > 0 && clusterStr != "" {
@@ -76,19 +76,20 @@ func (sender *clusterModelJobSender) sendJob(cluster *datahub_resources.Cluster,
 		jobJSONStr, err := jb.GetJobJSONString()
 		if err != nil {
 			scope.Errorf(
-				"Prepare model job payload failed for cluster %s with granularity seconds %v. %s",
-				clusterName, granularity, err.Error())
+				"[CLUSTER][%s][%s] Prepare model job payload failed. %s",
+				dataGranularity, clusterName, err.Error())
 			return
 		}
 
-		err = queueSender.SendJsonString(modelQueueName, jobJSONStr,
-			fmt.Sprintf("%s/%v", clusterName, granularity))
+		clusterJobStr := fmt.Sprintf("%s/%v", clusterName, granularity)
+		scope.Infof("[CLUSTER][%s][%s] Try to send cluster model job: %s", dataGranularity, clusterName, clusterJobStr)
+		err = queueSender.SendJsonString(modelQueueName, jobJSONStr, clusterJobStr, granularity)
 		if err == nil {
 			sender.modelMapper.AddModelInfo(pdUnit, dataGranularity, clusterInfo)
 		} else {
 			scope.Errorf(
-				"Send model job payload failed for cluster %s with granularity seconds %v. %s",
-				clusterName, granularity, err.Error())
+				"[CLUSTER][%s][%s] Send model job payload failed. %s",
+				dataGranularity, clusterName, err.Error())
 		}
 	}
 }
@@ -102,8 +103,9 @@ func (sender *clusterModelJobSender) genClusterInfo(clusterName string,
 	return clusterInfo
 }
 
-func (sender *clusterModelJobSender) getLastPrediction(datahubServiceClnt datahub_v1alpha1.DatahubServiceClient,
+func (sender *clusterModelJobSender) getLastMIdPrediction(datahubServiceClnt datahub_v1alpha1.DatahubServiceClient,
 	cluster *datahub_resources.Cluster, granularity int64) ([]*datahub_predictions.MetricData, error) {
+	dataGranularity := queue.GetGranularityStr(granularity)
 	clusterName := cluster.ObjectMeta.GetName()
 	clusterPredictRes, err := datahubServiceClnt.ListClusterPredictions(context.Background(),
 		&datahub_predictions.ListClusterPredictionsRequest{
@@ -126,17 +128,101 @@ func (sender *clusterModelJobSender) getLastPrediction(datahubServiceClnt datahu
 	if err != nil {
 		return nil, err
 	}
+	lastPid := ""
 	if len(clusterPredictRes.GetClusterPredictions()) > 0 {
 		lastClusterPrediction := clusterPredictRes.GetClusterPredictions()[0]
-		if lastClusterPrediction.GetPredictedRawData() != nil {
-			return lastClusterPrediction.GetPredictedRawData(), nil
-		} else if lastClusterPrediction.GetPredictedLowerboundData() != nil {
-			return lastClusterPrediction.GetPredictedLowerboundData(), nil
-		} else if lastClusterPrediction.GetPredictedUpperboundData() != nil {
-			return lastClusterPrediction.GetPredictedUpperboundData(), nil
+		lnsPDRData := lastClusterPrediction.GetPredictedRawData()
+		if lnsPDRData == nil {
+			lnsPDRData = lastClusterPrediction.GetPredictedLowerboundData()
 		}
+		if lnsPDRData == nil {
+			lnsPDRData = lastClusterPrediction.GetPredictedUpperboundData()
+		}
+		for _, pdRD := range lnsPDRData {
+			for _, theData := range pdRD.GetData() {
+				lastPid = theData.GetPredictionId()
+				break
+			}
+			if lastPid != "" {
+				break
+			}
+		}
+	} else {
+		return []*datahub_predictions.MetricData{}, nil
+	}
+
+	if lastPid == "" {
+		return nil, fmt.Errorf("[CLUSTER][%s][%s] Query last prediction id failed",
+			dataGranularity, clusterName)
+	}
+	clusterPredictRes, err = datahubServiceClnt.ListClusterPredictions(context.Background(),
+		&datahub_predictions.ListClusterPredictionsRequest{
+			ObjectMeta: []*datahub_resources.ObjectMeta{
+				&datahub_resources.ObjectMeta{
+					Name: clusterName,
+				},
+			},
+			Granularity: granularity,
+			QueryCondition: &datahub_common.QueryCondition{
+				Order: datahub_common.QueryCondition_DESC,
+				TimeRange: &datahub_common.TimeRange{
+					Step: &duration.Duration{
+						Seconds: granularity,
+					},
+				},
+			},
+			PredictionId: lastPid,
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(clusterPredictRes.GetClusterPredictions()) > 0 {
+		metricData := []*datahub_predictions.MetricData{}
+		for _, clusterPrediction := range clusterPredictRes.GetClusterPredictions() {
+			for _, pdRD := range clusterPrediction.GetPredictedRawData() {
+				for _, pdD := range pdRD.GetData() {
+					modelID := pdD.GetModelId()
+					if modelID != "" {
+						mIDClusterPrediction, err := sender.getPredictionByMId(datahubServiceClnt, cluster, granularity, modelID)
+						if err != nil {
+							scope.Errorf("[CLUSTER][%s][%s] Query prediction with model Id %s failed. %s",
+								dataGranularity, clusterName, modelID, err.Error())
+						}
+						for _, mIDClusterPD := range mIDClusterPrediction {
+							metricData = append(metricData, mIDClusterPD.GetPredictedRawData()...)
+						}
+						break
+					}
+				}
+			}
+		}
+		return metricData, nil
 	}
 	return nil, nil
+}
+
+func (sender *clusterModelJobSender) getPredictionByMId(datahubServiceClnt datahub_v1alpha1.DatahubServiceClient,
+	cluster *datahub_resources.Cluster, granularity int64, modelID string) ([]*datahub_predictions.ClusterPrediction, error) {
+	clusterPredictRes, err := datahubServiceClnt.ListClusterPredictions(context.Background(),
+		&datahub_predictions.ListClusterPredictionsRequest{
+			Granularity: granularity,
+			ObjectMeta: []*datahub_resources.ObjectMeta{
+				&datahub_resources.ObjectMeta{
+					Name: cluster.GetObjectMeta().GetName(),
+				},
+			},
+			QueryCondition: &datahub_common.QueryCondition{
+				Order: datahub_common.QueryCondition_DESC,
+				TimeRange: &datahub_common.TimeRange{
+					Step: &duration.Duration{
+						Seconds: granularity,
+					},
+				},
+			},
+			ModelId: modelID,
+		})
+	return clusterPredictRes.GetClusterPredictions(), err
 }
 
 func (sender *clusterModelJobSender) getQueryMetricStartTime(descClusterPredictions []*datahub_predictions.ClusterPrediction) int64 {
@@ -172,33 +258,30 @@ func (sender *clusterModelJobSender) sendJobByMetrics(cluster *datahub_resources
 			datahub_common.MetricType_CPU_USAGE_SECONDS_PERCENTAGE,
 			datahub_common.MetricType_MEMORY_USAGE_BYTES)
 		sender.sendJob(cluster, queueSender, pdUnit, granularity, clusterInfo)
-		scope.Infof("No prediction metrics found of cluster %s",
-			clusterName)
+		scope.Infof("[CLUSTER][%s][%s] No prediction metrics found, send model jobs",
+			dataGranularity, clusterName)
 		return
 	}
 
+	clusterInfo := sender.genClusterInfo(clusterName)
 	for _, lastPredictionMetric := range lastPredictionMetrics {
 		if len(lastPredictionMetric.GetData()) == 0 {
 			clusterInfo := sender.genClusterInfo(clusterName,
 				datahub_common.MetricType_CPU_USAGE_SECONDS_PERCENTAGE,
 				datahub_common.MetricType_MEMORY_USAGE_BYTES)
 			sender.sendJob(cluster, queueSender, pdUnit, granularity, clusterInfo)
-			scope.Infof("No prediction metric %s found of cluster %s",
-				lastPredictionMetric.GetMetricType().String(), clusterName)
+			scope.Infof("[CLUSTER][%s][%s] No prediction metric %s found, send model jobs",
+				dataGranularity, clusterName, lastPredictionMetric.GetMetricType().String())
 			return
 		} else {
 			lastPrediction := lastPredictionMetric.GetData()[0]
 			lastPredictionTime := lastPredictionMetric.GetData()[0].GetTime().GetSeconds()
 			if lastPrediction != nil && lastPredictionTime <= nowSeconds {
-				scope.Infof("cluster prediction %s is out of date due to last predict time is %v (current: %v)",
-					clusterName, lastPredictionTime, nowSeconds)
-			}
-			if lastPrediction != nil && lastPredictionTime <= nowSeconds {
 				clusterInfo := sender.genClusterInfo(clusterName,
 					datahub_common.MetricType_CPU_USAGE_SECONDS_PERCENTAGE,
 					datahub_common.MetricType_MEMORY_USAGE_BYTES)
-				scope.Infof("send cluster %s model job due to no predict found or predict is out of date",
-					clusterName)
+				scope.Infof("[CLUSTER][%s][%s] send model job due to no predict found or predict is out of date, send model jobs",
+					dataGranularity, clusterName)
 				sender.sendJob(cluster, queueSender, pdUnit, granularity, clusterInfo)
 				return
 			}
@@ -215,8 +298,8 @@ func (sender *clusterModelJobSender) sendJobByMetrics(cluster *datahub_resources
 					QueryCondition: queryCondition,
 				})
 			if err != nil {
-				scope.Errorf("Get cluster %s Prediction with granularity %v for sending model job failed: %s",
-					clusterName, granularity, err.Error())
+				scope.Errorf("[CLUSTER][%s][%s] Get prediction for sending model job failed: %s",
+					dataGranularity, clusterName, err.Error())
 				continue
 			}
 			clusterPredictions := clusterPredictRes.GetClusterPredictions()
@@ -236,6 +319,7 @@ func (sender *clusterModelJobSender) sendJobByMetrics(cluster *datahub_resources
 							Step: &duration.Duration{
 								Seconds: granularity,
 							},
+							AggregateFunction: datahub_common.TimeRange_AVG,
 						},
 					},
 					ObjectMeta: []*datahub_resources.ObjectMeta{
@@ -245,43 +329,43 @@ func (sender *clusterModelJobSender) sendJobByMetrics(cluster *datahub_resources
 					},
 				})
 			if err != nil {
-				scope.Errorf("List clusters %s metric with granularity %v for sending model job failed: %s",
-					clusterName, granularity, err.Error())
+				scope.Errorf("[CLUSTER][%s][%s] List metric for sending model job failed: %s",
+					dataGranularity, clusterName, err.Error())
 				continue
 			}
 			clusterMetrics := clusterMetricsRes.GetClusterMetrics()
+			for _, clusterPrediction := range clusterPredictions {
+				predictRawData := clusterPrediction.GetPredictedRawData()
+				for _, predictRawDatum := range predictRawData {
 
-			for _, clusterMetric := range clusterMetrics {
-				metricData := clusterMetric.GetMetricData()
-				for _, metricDatum := range metricData {
-					mData := metricDatum.GetData()
-					pData := []*datahub_predictions.Sample{}
-					clusterInfo := sender.genClusterInfo(clusterName)
-					for _, clusterPrediction := range clusterPredictions {
-						predictRawData := clusterPrediction.GetPredictedRawData()
-						for _, predictRawDatum := range predictRawData {
+					for _, clusterMetric := range clusterMetrics {
+						metricData := clusterMetric.GetMetricData()
+						for _, metricDatum := range metricData {
+							mData := metricDatum.GetData()
+							pData := []*datahub_predictions.Sample{}
 							if metricDatum.GetMetricType() == predictRawDatum.GetMetricType() {
 								pData = append(pData, predictRawDatum.GetData()...)
+								metricsNeedToModel, drift := DriftEvaluation(UnitTypeCluster, predictRawDatum.GetMetricType(), granularity, mData, pData, map[string]string{
+									"clusterName":       clusterName,
+									"targetDisplayName": fmt.Sprintf("[CLUSTER][%s][%s]", dataGranularity, clusterName),
+								}, sender.metricExporter)
+								if drift {
+									scope.Infof("[CLUSTER][%s][%s] Export drift counter",
+										dataGranularity, clusterName)
+									sender.metricExporter.AddClusterMetricDrift(clusterName, queue.GetGranularityStr(granularity),
+										time.Now().Unix(), 1.0)
+								}
+								clusterInfo.ModelMetrics = append(clusterInfo.ModelMetrics, metricsNeedToModel...)
 							}
 						}
-					}
-					metricsNeedToModel, drift := DriftEvaluation(UnitTypeCluster, metricDatum.GetMetricType(), granularity, mData, pData, map[string]string{
-						"clusterName":       clusterName,
-						"targetDisplayName": fmt.Sprintf("cluster %s", clusterName),
-					}, sender.metricExporter)
-					if drift {
-						scope.Infof("export cluster %s drift counter with granularity %s",
-							clusterName, dataGranularity)
-						sender.metricExporter.AddClusterMetricDrift(clusterName, queue.GetGranularityStr(granularity), 1.0)
-					}
-					clusterInfo.ModelMetrics = append(clusterInfo.ModelMetrics, metricsNeedToModel...)
-					isModeling := sender.modelMapper.IsModeling(pdUnit, dataGranularity, clusterInfo)
-					if !isModeling || (isModeling && sender.modelMapper.IsModelTimeout(
-						pdUnit, dataGranularity, clusterInfo)) {
-						sender.sendJob(cluster, queueSender, pdUnit, granularity, clusterInfo)
 					}
 				}
 			}
 		}
+	}
+	isModeling := sender.modelMapper.IsModeling(pdUnit, dataGranularity, clusterInfo)
+	if !isModeling || (isModeling && sender.modelMapper.IsModelTimeout(
+		pdUnit, dataGranularity, clusterInfo)) {
+		sender.sendJob(cluster, queueSender, pdUnit, granularity, clusterInfo)
 	}
 }

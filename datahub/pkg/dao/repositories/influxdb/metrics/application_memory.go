@@ -109,8 +109,9 @@ func (r *ApplicationMemoryRepository) read(ctx context.Context, request DaoMetri
 	statement.AppendWhereClauseFromTimeCondition()
 	statement.SetOrderClauseFromQueryCondition()
 	statement.SetLimitClauseFromQueryCondition()
-
 	cmd := statement.BuildQueryCmd()
+
+	scope.Debugf("Query inlfuxdb: cmd: %s", cmd)
 	response, err := r.influxDB.QueryDB(cmd, string(RepoInflux.Metric))
 	if err != nil {
 		return DaoMetricTypes.AppMetricMap{}, errors.Wrap(err, "query influxdb failed")
@@ -161,9 +162,14 @@ func (r *ApplicationMemoryRepository) steps(ctx context.Context, request DaoMetr
 	statement.AppendWhereClauseFromTimeCondition()
 	statement.SetOrderClauseFromQueryCondition()
 	statement.SetLimitClauseFromQueryCondition()
-	statement.SetFunction(InternalInflux.Select, "MAX", string(EntityInfluxMetric.ApplicationValue))
+	f, exist := aggregateFuncToInfluxDBFunc[request.AggregateOverTimeFunction]
+	if !exist {
+		return DaoMetricTypes.AppMetricMap{}, errors.Errorf(`not supported aggregate function "%d"`, request.AggregateOverTimeFunction)
+	}
+	statement.SetFunction(InternalInflux.Select, f, string(EntityInfluxMetric.ApplicationValue))
 	cmd := statement.BuildQueryCmd()
 
+	scope.Debugf("Query inlfuxdb: cmd: %s", cmd)
 	response, err := r.influxDB.QueryDB(cmd, string(RepoInflux.Metric))
 	if err != nil {
 		return DaoMetricTypes.AppMetricMap{}, errors.Wrap(err, "query influxdb failed")

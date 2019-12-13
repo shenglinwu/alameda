@@ -2,11 +2,13 @@ package datahub
 
 import (
 	"fmt"
+	"net"
+
 	"github.com/containers-ai/alameda/datahub/pkg/apis/keycodes"
 	"github.com/containers-ai/alameda/datahub/pkg/apis/v1alpha1"
 	DatahubConfig "github.com/containers-ai/alameda/datahub/pkg/config"
 	InternalInflux "github.com/containers-ai/alameda/internal/pkg/database/influxdb"
-	OperatorAPIs "github.com/containers-ai/alameda/operator/pkg/apis"
+	OperatorAPIs "github.com/containers-ai/alameda/operator/api/v1alpha1"
 	K8SUtils "github.com/containers-ai/alameda/pkg/utils/kubernetes"
 	Log "github.com/containers-ai/alameda/pkg/utils/log"
 	DatahubV1alpha1 "github.com/containers-ai/api/alameda_api/v1alpha1/datahub"
@@ -15,7 +17,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"net"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -120,6 +121,8 @@ func (s *Server) Err() <-chan error {
 }
 
 func (s *Server) InitInfluxdbDatabase() {
+	scope.Info("Initialize database")
+
 	influxdbClient := InternalInflux.NewClient(&InternalInflux.Config{
 		Address:                s.Config.InfluxDB.Address,
 		Username:               s.Config.InfluxDB.Username,
@@ -133,18 +136,19 @@ func (s *Server) InitInfluxdbDatabase() {
 		"alameda_gpu",
 		"alameda_gpu_prediction",
 		"alameda_metric",
+		"alameda_planning",
 		"alameda_prediction",
 		"alameda_recommendation",
 		"alameda_score",
 	}
 
 	for _, db := range databaseList {
-		err := influxdbClient.CreateDatabase(db)
+		err := influxdbClient.CreateDatabase(db, 0)
 		if err != nil {
 			scope.Error(err.Error())
 		}
 
-		err = influxdbClient.ModifyDefaultRetentionPolicy(db)
+		err = influxdbClient.ModifyDefaultRetentionPolicy(db, 0)
 		if err != nil {
 			scope.Error(err.Error())
 		}

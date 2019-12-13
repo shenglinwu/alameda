@@ -15,12 +15,12 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 23,
-  "iteration": 1569834647193,
+  "iteration": 1576136772340,
   "links": [],
   "panels": [
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -34,6 +34,7 @@
     },
     {
       "content": "<table style=\"height:80%;width:100%;\">\n  <tr>\n    <td>\n      <div id=\"total\" type=\"text/JavaScript\" style=\"text-align:center;font-size:40px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var total = `${total}`;\n  document.getElementById('total').innerHTML = `${total}`;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 3,
         "w": 5,
@@ -43,6 +44,7 @@
       "id": 35,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Total Node Count",
       "type": "text"
     },
@@ -132,7 +134,7 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select sum(mean) from (SELECT mean(value) FROM \"alameda_gpu\"..\"nvidia_gpu_num_devices\" where $timeFilter group by host, uuid, time(60s) fill(none)) group by time(60s)",
+          "query": "select sum(mean) from (SELECT mean(value) FROM \"alameda_gpu\"..\"nvidia_gpu_num_devices\" where $timeFilter group by host, uuid, time(60s) fill(none)) where $timeFilter group by time(60s)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -415,6 +417,7 @@
     },
     {
       "content": "<table style=\"height:80%;width:100%;background:#299c46\">\n  <tr>\n    <td>\n      <div id=\"active\" type=\"text/JavaScript\" style=\"text-align:center;font-size:40px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var active = `${active}`;\n  document.getElementById('active').innerHTML = `${active}`;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 3,
         "w": 5,
@@ -424,6 +427,7 @@
       "id": 34,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Active Node Count",
       "type": "text"
     },
@@ -513,7 +517,7 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select sum(mean) from (SELECT mean(value) FROM \"alameda_gpu\"..\"nvidia_gpu_memory_total_bytes\" where $timeFilter group by host, uuid, time(60s) fill(none)) group by time(60s)",
+          "query": "select sum(mean) from (SELECT mean(value) FROM \"alameda_gpu\"..\"nvidia_gpu_memory_total_bytes\" where $timeFilter group by host, uuid, time(60s) fill(none)) where $timeFilter group by time(60s)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -551,6 +555,7 @@
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -649,7 +654,7 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select count from (select count(avg) from (select mean(value) as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where avg <= ($gpu_utilization/100) group by time($interval) ) ",
+          "query": "select count from (select count(avg) from (select mean(value) as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where avg <= ($gpu_utilization/100) and $timeFilter group by time($interval) ) ",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -770,7 +775,7 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select host, avg from (select last(avg) as avg from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(-1)) where avg <> -0.01 group by host) where avg < ($gpu_utilization/100)",
+          "query": "select host, avg from (select last(avg) as avg from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(-1)) where avg <> -0.01 group by host) where $timeFilter and avg < ($gpu_utilization/100)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
@@ -804,6 +809,7 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
@@ -825,7 +831,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 2,
       "points": false,
@@ -863,7 +871,7 @@
           "legendFormat": "Number of nodes",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select count from (select count(avg) from (select mean(value) as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where avg <= ($gpu_utilization/100) group by time($interval) ) ",
+          "query": "select count from (select count(avg) from (select mean(value) as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where $timeFilter and avg <= ($gpu_utilization/100) group by time($interval) ) ",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1166,6 +1174,7 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
@@ -1186,7 +1195,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 2,
       "points": false,
@@ -1224,7 +1235,7 @@
           "legendFormat": "Number of nodes",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select count(host) from (select mean(value) as value from alameda_gpu..nodes_of_gpu_memory_utilization where $timeFilter group by host, time(30s)) where value <= ($memory_utilization/100) group by time(30s))",
+          "query": "select * from (select count(host) from (select mean(value) as value from alameda_gpu..nodes_of_gpu_memory_utilization where $timeFilter group by host, time(30s)) where $timeFilter and value <= ($memory_utilization/100) group by time(30s))",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1289,6 +1300,7 @@
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1386,7 +1398,7 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select count from (select count(avg) from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where avg >= ($high_gpu_utilization/100) group by time($interval) ) ",
+          "query": "select count from (select count(avg) from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where $timeFilter and avg >= ($high_gpu_utilization/100) group by time($interval) ) ",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1507,7 +1519,7 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select last(avg) as avg, time from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval)) where avg > ($high_gpu_utilization/100) group by host",
+          "query": "select last(avg) as avg, time from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval)) where $timeFilter and avg > ($high_gpu_utilization/100) group by host",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
@@ -1541,6 +1553,7 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
@@ -1562,7 +1575,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 2,
       "points": false,
@@ -1599,7 +1614,7 @@
           "legendFormat": "Number of nodes",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select count from (select count(avg) from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where avg >= ($high_gpu_utilization/100) group by time($interval) ) ",
+          "query": "select count from (select count(avg) from (select mean(value)/100 as avg from \"alameda_gpu\"..\"nvidia_gpu_duty_cycle\" where $timeFilter group by host, time($interval) fill(none)) where $timeFilter and avg >= ($high_gpu_utilization/100) group by time($interval) ) ",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1917,6 +1932,7 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
@@ -1937,7 +1953,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
-      "options": {},
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 2,
       "points": false,
@@ -1974,7 +1992,7 @@
           "legendFormat": "Number of nodes",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select count(host) from (select mean(value) as value from alameda_gpu..nodes_of_gpu_memory_utilization where $timeFilter group by host, time(30s)) where value >= ($high_memory_utilization/100) group by time(30s))",
+          "query": "select * from (select count(host) from (select mean(value) as value from alameda_gpu..nodes_of_gpu_memory_utilization where $timeFilter group by host, time(30s)) where $timeFilter and value >= ($high_memory_utilization/100) group by time(30s))",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2039,6 +2057,7 @@
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2160,7 +2179,7 @@
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 16,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {

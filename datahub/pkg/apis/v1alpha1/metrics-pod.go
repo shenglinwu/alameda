@@ -59,7 +59,7 @@ func (s *ServiceV1alpha1) ListPodMetrics(ctx context.Context, in *ApiMetrics.Lis
 			},
 		}, nil
 	}
-	requestExt.SetDefault()
+	requestExt.SetDefaultWithMetricsDBType(s.Config.Apis.Metrics.Source)
 
 	metricDAO := DaoMetric.NewPodMetricsReaderDAO(*s.Config)
 	podMetricMap, err := metricDAO.ListMetrics(ctx, requestExt.ProduceRequest())
@@ -162,7 +162,7 @@ func (s *ServiceV1alpha1) ListPodMetricsDemo(ctx context.Context, in *ApiMetrics
 	demoContainerMetric.MetricData = append(demoContainerMetric.MetricData, &demoMetricDataMem)
 
 	demoPodMetric := ApiMetrics.PodMetric{
-		ObjectMeta:       FormatResponse.NewObjectMeta(tempObjectMeta),
+		ObjectMeta:       FormatResponse.NewObjectMeta(&tempObjectMeta),
 		ContainerMetrics: demoContainerMetricList,
 	}
 	demoPodMetricList = append(demoPodMetricList, &demoPodMetric)

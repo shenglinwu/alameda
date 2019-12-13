@@ -1,4 +1,4 @@
-hourlyPredict = true
+hourlyPredict = false
 
 [datahub]
 address = "datahub.alameda.svc.cluster.local:50050"
@@ -7,19 +7,23 @@ connRetry = 5
 [queue]
 url = "amqp://admin:adminpass@rabbitmq.alameda.svc.cluster.local:5672"
   [queue.retry]
-  publishTime = 3
+  publishTime = 5
   publishIntervalMs = 500
-  consumeTime = 3
+  consumeTime = 5
   consumeIntervalMs = 500
   connectIntervalMs = 3000
+  ackTimeoutSec = 3
   [queue.consumer]
   reconnectInterval = 30 #seconds
 
 [serviceSetting]
 granularities = ["30s", "1h", "6h", "24h"]
-predictUnits = ["POD", "NODE", "GPU", "NAMESPACE",
-  "APPLICATION", "CLUSTER", "CONTROLLER"
+predictUnits = ["POD", "GPU", "NAMESPACE",
+  "APPLICATION", "CLUSTER", "CONTROLLER", "NODE"
 ]
+# must put NODE predict unit at last, because to send
+# NODE jobs with granularity 30s depends on POD job
+# with granularity 30s are sent
 
 [granularities]
 
@@ -34,21 +38,21 @@ predictUnits = ["POD", "NODE", "GPU", "NAMESPACE",
   dataGranularity = "6h"
   dataGranularitySec = 21600
   predictionSteps = 30
-  predictionJobSendIntervalSec = 86400
+  predictionJobSendIntervalSec = 21600
   modelJobSendIntervalSec = 21600
 
   [granularities.1h]
   dataGranularity = "1h"
   dataGranularitySec = 3600
   predictionSteps = 30
-  predictionJobSendIntervalSec = 28800
+  predictionJobSendIntervalSec = 3600
   modelJobSendIntervalSec = 3600
 
   [granularities.30s]
   dataGranularity = "30s"
   dataGranularitySec = 30
   predictionSteps = 30
-  predictionJobSendIntervalSec = 900
+  predictionJobSendIntervalSec = 30
   modelJobSendIntervalSec = 30
 
 [predictUnits]
@@ -80,10 +84,11 @@ outputLevel = "info" # debug, info, warn, error, fatal, none
 
 [model]
 enabled = false
-timeout = 30
+timeout = 180
 
 [measurements]
   current = "mape"
+  minimumDataPoints = 5
   [measurements.mape]
   threshold = 15
   [measurements.rmse]

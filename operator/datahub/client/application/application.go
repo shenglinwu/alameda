@@ -3,27 +3,31 @@ package application
 import (
 	"context"
 
-	autoscalingv1alpha1 "github.com/containers-ai/alameda/operator/pkg/apis/autoscaling/v1alpha1"
+	autoscalingv1alpha1 "github.com/containers-ai/alameda/operator/api/v1alpha1"
+	"github.com/containers-ai/alameda/operator/datahub/client"
 	datahub_v1alpha1 "github.com/containers-ai/api/alameda_api/v1alpha1/datahub"
 	datahub_resources "github.com/containers-ai/api/alameda_api/v1alpha1/datahub/resources"
 	"github.com/pkg/errors"
-	"google.golang.org/genproto/googleapis/rpc/code"
 	"google.golang.org/grpc"
 )
 
 type ApplicationRepository struct {
 	conn          *grpc.ClientConn
 	datahubClient datahub_v1alpha1.DatahubServiceClient
+
+	clusterUID string
 }
 
 // NewApplicationRepository return ApplicationRepository instance
-func NewApplicationRepository(conn *grpc.ClientConn) *ApplicationRepository {
+func NewApplicationRepository(conn *grpc.ClientConn, clusterUID string) *ApplicationRepository {
 
 	datahubClient := datahub_v1alpha1.NewDatahubServiceClient(conn)
 
 	return &ApplicationRepository{
 		conn:          conn,
 		datahubClient: datahubClient,
+
+		clusterUID: clusterUID,
 	}
 }
 
@@ -34,8 +38,12 @@ func (repo *ApplicationRepository) CreateApplications(arg interface{}) error {
 		for _, app := range apps {
 			applications = append(applications, &datahub_resources.Application{
 				ObjectMeta: &datahub_resources.ObjectMeta{
-					Name:      app.GetName(),
-					Namespace: app.GetNamespace(),
+					Name:        app.GetName(),
+					Namespace:   app.GetNamespace(),
+					ClusterName: repo.clusterUID,
+				},
+				AlamedaApplicationSpec: &datahub_resources.AlamedaApplicationSpec{
+					ScalingTool: repo.getAlamedaScalerDatahubScalingType(app),
 				},
 			})
 		}
@@ -48,68 +56,88 @@ func (repo *ApplicationRepository) CreateApplications(arg interface{}) error {
 		Applications: applications,
 	}
 
-	if reqRes, err := repo.datahubClient.CreateApplications(
-		context.Background(), &req); err != nil {
+	if resp, err := repo.datahubClient.CreateApplications(context.Background(), &req); err != nil {
 		return errors.Errorf("create applications to datahub failed: %s", err.Error())
-	} else if reqRes == nil {
-		return errors.Errorf("create applications to datahub failed: receive nil status")
-	} else if reqRes.Code != int32(code.Code_OK) {
-		return errors.Errorf(
-			"create applications to datahub failed: receive statusCode: %d, message: %s",
-			reqRes.Code, reqRes.Message)
+	} else if _, err := client.IsResponseStatusOK(resp); err != nil {
+		return errors.Wrap(err, "create applications to Datahub failed")
 	}
 	return nil
 }
 
-func (repo *ApplicationRepository) ListApplications() (
-	[]*datahub_resources.Application, error) {
-	applications := []*datahub_resources.Application{}
-	req := datahub_resources.ListApplicationsRequest{}
-	if reqRes, err := repo.datahubClient.ListApplications(
-		context.Background(), &req); err != nil {
-		if reqRes.Status != nil {
-			return applications, errors.Errorf(
-				"list applications from Datahub failed: %s", err.Error())
-		}
-		return applications, err
-	} else {
-		applications = reqRes.GetApplications()
+func (repo *ApplicationRepository) GetApplication(ctx context.Context, namespace, name string) (datahub_resources.Application, error) {
+	req := datahub_resources.ListApplicationsRequest{
+		ObjectMeta: []*datahub_resources.ObjectMeta{
+			&datahub_resources.ObjectMeta{
+				Namespace:   namespace,
+				Name:        name,
+				ClusterName: repo.clusterUID,
+			},
+		},
 	}
-	return applications, nil
+	resp, err := repo.datahubClient.ListApplications(ctx, &req)
+	if err != nil {
+		return datahub_resources.Application{}, errors.Wrap(err, "list applications from Datahub failed")
+	} else if resp == nil {
+		return datahub_resources.Application{}, errors.New("list applications from Datahub failed: receive nil response")
+	} else if _, err := client.IsResponseStatusOK(resp.Status); err != nil {
+		return datahub_resources.Application{}, errors.Wrap(err, "list applications from Datahub failed")
+	}
+	if len(resp.Applications) < 1 {
+		return datahub_resources.Application{}, errors.New("not found")
+	} else if resp.Applications[0] == nil {
+		return datahub_resources.Application{}, errors.New("not found")
+	} else if len(resp.Applications) > 1 {
+		return datahub_resources.Application{}, errors.Errorf("length of applications from Datahub %d > 1", len(resp.Applications))
+	}
+	return *resp.Applications[0], nil
 }
 
-// DeleteApplication delete applications from datahub
-func (repo *ApplicationRepository) DeleteApplications(
-	arg interface{}) error {
-	objMeta := []*datahub_resources.ObjectMeta{}
-	if applications, ok := arg.([]*datahub_resources.Application); ok {
-		for _, application := range applications {
-			objMeta = append(objMeta, &datahub_resources.ObjectMeta{
-				Name:      application.GetObjectMeta().GetName(),
-				Namespace: application.GetObjectMeta().GetNamespace(),
-			})
-		}
-	}
-	if meta, ok := arg.([]*datahub_resources.ObjectMeta); ok {
-		objMeta = meta
+func (repo *ApplicationRepository) ListApplications() ([]*datahub_resources.Application, error) {
+	req := datahub_resources.ListApplicationsRequest{
+		ObjectMeta: []*datahub_resources.ObjectMeta{
+			&datahub_resources.ObjectMeta{
+				ClusterName: repo.clusterUID,
+			},
+		},
 	}
 
+	resp, err := repo.datahubClient.ListApplications(context.Background(), &req)
+	if err != nil {
+		return nil, errors.Wrap(err, "list applications from datahub failed")
+	} else if resp == nil {
+		return nil, errors.Errorf("list applications from Datahub failed, receive nil response")
+	} else if _, err := client.IsResponseStatusOK(resp.Status); err != nil {
+		return nil, errors.Wrap(err, "list applications from Datahub failed")
+	}
+	return resp.Applications, nil
+}
+
+// DeleteApplications delete applications from datahub
+func (repo *ApplicationRepository) DeleteApplications(ctx context.Context, objectMetas []*datahub_resources.ObjectMeta) error {
 	req := datahub_resources.DeleteApplicationsRequest{
-		ObjectMeta: objMeta,
+		ObjectMeta: objectMetas,
 	}
-
-	if resp, err := repo.datahubClient.DeleteApplications(
-		context.Background(), &req); err != nil {
-		return errors.Errorf("delete application from Datahub failed: %s",
-			err.Error())
-	} else if resp.Code != int32(code.Code_OK) {
-		return errors.Errorf(
-			"delete application from Datahub failed: receive code: %d, message: %s",
-			resp.Code, resp.Message)
+	if resp, err := repo.datahubClient.DeleteApplications(ctx, &req); err != nil {
+		return errors.Wrap(err, "delete applications from Datahub failed")
+	} else if _, err := client.IsResponseStatusOK(resp); err != nil {
+		return errors.Wrap(err, "delete applications from Datahub failed")
 	}
 	return nil
 }
 
 func (repo *ApplicationRepository) Close() {
 	repo.conn.Close()
+}
+
+func (repo *ApplicationRepository) getAlamedaScalerDatahubScalingType(alamedaScaler autoscalingv1alpha1.AlamedaScaler) datahub_resources.ScalingTool {
+	scalingType := datahub_resources.ScalingTool_SCALING_TOOL_UNDEFINED
+	switch alamedaScaler.Spec.ScalingTool.Type {
+	case autoscalingv1alpha1.ScalingToolTypeVPA:
+		scalingType = datahub_resources.ScalingTool_VPA
+	case autoscalingv1alpha1.ScalingToolTypeHPA:
+		scalingType = datahub_resources.ScalingTool_HPA
+	case autoscalingv1alpha1.ScalingToolTypeDefault:
+		scalingType = datahub_resources.ScalingTool_NONE
+	}
+	return scalingType
 }

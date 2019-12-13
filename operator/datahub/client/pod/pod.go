@@ -3,13 +3,13 @@ package pod
 import (
 	"context"
 
-	datahubutils "github.com/containers-ai/alameda/operator/pkg/utils/datahub"
+	"github.com/pkg/errors"
+	"google.golang.org/grpc"
+
+	"github.com/containers-ai/alameda/operator/datahub/client"
 	logUtil "github.com/containers-ai/alameda/pkg/utils/log"
 	datahub_v1alpha1 "github.com/containers-ai/api/alameda_api/v1alpha1/datahub"
 	datahub_resources "github.com/containers-ai/api/alameda_api/v1alpha1/datahub/resources"
-	"github.com/pkg/errors"
-	"google.golang.org/genproto/googleapis/rpc/code"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -17,64 +17,88 @@ var (
 )
 
 // PodRepository creates predicted pod to datahub
-type PodRepository struct{}
+type PodRepository struct {
+	conn          *grpc.ClientConn
+	datahubClient datahub_v1alpha1.DatahubServiceClient
+
+	clusterUID string
+}
 
 // NewPodRepository return PodRepository instance
-func NewPodRepository() *PodRepository {
-	return &PodRepository{}
+func NewPodRepository(conn *grpc.ClientConn, clusterUID string) *PodRepository {
+	datahubClient := datahub_v1alpha1.NewDatahubServiceClient(conn)
+	return &PodRepository{
+		conn:          conn,
+		datahubClient: datahubClient,
+
+		clusterUID: clusterUID,
+	}
+}
+
+func (repo *PodRepository) CreatePods(ctx context.Context, pods []*datahub_resources.Pod) error {
+	req := datahub_resources.CreatePodsRequest{
+		Pods: pods,
+	}
+	resp, err := repo.datahubClient.CreatePods(context.Background(), &req)
+	if err != nil {
+		return errors.Wrap(err, "create pods to Datahub failed")
+	} else if _, err := client.IsResponseStatusOK(resp); err != nil {
+		return errors.Wrap(err, "create pods to Datahub failed")
+	}
+	return nil
 }
 
 func (repo *PodRepository) ListAlamedaPods() ([]*datahub_resources.Pod, error) {
-	alamedaPods := []*datahub_resources.Pod{}
-	conn, err := grpc.Dial(datahubutils.GetDatahubAddress(), grpc.WithInsecure())
-	defer conn.Close()
-	if err != nil {
-		return nil, errors.Wrapf(err, "list Alameda pods from Datahub failed: %s", err.Error())
-	}
-
 	req := datahub_resources.ListPodsRequest{
-		Kind: datahub_resources.Kind_POD,
+		ObjectMeta: []*datahub_resources.ObjectMeta{
+			&datahub_resources.ObjectMeta{
+				ClusterName: repo.clusterUID,
+			},
+		},
+		Kind: datahub_resources.Kind_KIND_UNDEFINED,
 	}
-	aiServiceClnt := datahub_v1alpha1.NewDatahubServiceClient(conn)
-	if resp, err := aiServiceClnt.ListPods(context.Background(), &req); err != nil {
-		return alamedaPods, errors.Wrapf(err, "list Alameda pods from Datahub failed: %s", err.Error())
-	} else if resp.Status != nil && resp.Status.Code != int32(code.Code_OK) {
-		return alamedaPods, errors.Errorf("list Alameda pods from Datahub failed: receive code: %d, message: %s", resp.Status.Code, resp.Status.Message)
-	} else {
-		alamedaPods = resp.GetPods()
+	resp, err := repo.datahubClient.ListPods(context.Background(), &req)
+	if err != nil {
+		return nil, errors.Wrapf(err, "list pods from Datahub failed: %s", err.Error())
+	} else if resp == nil {
+		return nil, errors.Errorf("list pods from Datahub failed, receive nil response")
+	} else if _, err := client.IsResponseStatusOK(resp.Status); err != nil {
+		return nil, errors.Wrap(err, "list pods from Datahub failed")
 	}
-	return alamedaPods, nil
+	return resp.Pods, nil
+}
+
+func (repo *PodRepository) ListAlamedaPodsByAlamedaScaler(ctx context.Context, namespace, name string) ([]*datahub_resources.Pod, error) {
+	req := datahub_resources.ListPodsRequest{
+		ObjectMeta: []*datahub_resources.ObjectMeta{
+			&datahub_resources.ObjectMeta{
+				Namespace:   namespace,
+				Name:        name,
+				ClusterName: repo.clusterUID,
+			},
+		},
+		Kind: datahub_resources.Kind_ALAMEDASCALER,
+	}
+	resp, err := repo.datahubClient.ListPods(context.Background(), &req)
+	if err != nil {
+		return nil, errors.Wrapf(err, "list pods from Datahub failed: %s", err.Error())
+	} else if resp == nil {
+		return nil, errors.Errorf("list pods from Datahub failed, receive nil response")
+	} else if _, err := client.IsResponseStatusOK(resp.Status); err != nil {
+		return nil, errors.Wrap(err, "list pods from Datahub failed")
+	}
+	return resp.Pods, nil
 }
 
 // DeletePods delete pods from datahub
-func (repo *PodRepository) DeletePods(arg interface{}) error {
-	objMeta := []*datahub_resources.ObjectMeta{}
-	if pods, ok := arg.([]*datahub_resources.Pod); ok {
-		for _, pod := range pods {
-			objMeta = append(objMeta, &datahub_resources.ObjectMeta{
-				Name: pod.ObjectMeta.GetName(),
-			})
-		}
-	}
-	if meta, ok := arg.([]*datahub_resources.ObjectMeta); ok {
-		objMeta = meta
-	}
-
-	conn, err := grpc.Dial(datahubutils.GetDatahubAddress(), grpc.WithInsecure())
-	defer conn.Close()
-	if err != nil {
-		return errors.Wrapf(err, "delete pods from Datahub failed: %s", err.Error())
-	}
-
+func (repo *PodRepository) DeletePods(ctx context.Context, objectMetas []*datahub_resources.ObjectMeta) error {
 	req := datahub_resources.DeletePodsRequest{
-		ObjectMeta: objMeta,
+		ObjectMeta: objectMetas,
 	}
-
-	aiServiceClnt := datahub_v1alpha1.NewDatahubServiceClient(conn)
-	if resp, err := aiServiceClnt.DeletePods(context.Background(), &req); err != nil {
-		return errors.Wrapf(err, "delete pods from Datahub failed: %s", err.Error())
-	} else if resp.Code != int32(code.Code_OK) {
-		return errors.Errorf("delete pods from Datahub failed: receive code: %d, message: %s", resp.Code, resp.Message)
+	if resp, err := repo.datahubClient.DeletePods(context.Background(), &req); err != nil {
+		return errors.Wrap(err, "delete pods from Datahub failed")
+	} else if _, err := client.IsResponseStatusOK(resp); err != nil {
+		return errors.Wrap(err, "delete pods from Datahub failed")
 	}
 	return nil
 }

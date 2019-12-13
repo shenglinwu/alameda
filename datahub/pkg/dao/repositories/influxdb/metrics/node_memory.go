@@ -108,6 +108,7 @@ func (r *NodeMemoryRepository) read(request DaoMetricTypes.ListNodeMetricsReques
 		return make([]*DaoMetricTypes.NodeMetric, 0), errors.Wrap(err, "failed to list node memory metrics")
 	}
 
+	scope.Debugf("Query inlfuxdb: cmd: %s", cmd)
 	results := InternalInfluxModels.NewInfluxResults(response)
 	for _, result := range results {
 		for i := 0; i < result.GetGroupNum(); i++ {
@@ -154,9 +155,14 @@ func (r *NodeMemoryRepository) steps(request DaoMetricTypes.ListNodeMetricsReque
 	statement.AppendWhereClauseFromTimeCondition()
 	statement.SetOrderClauseFromQueryCondition()
 	statement.SetLimitClauseFromQueryCondition()
-	statement.SetFunction(InternalInflux.Select, "MAX", string(EntityInfluxMetric.NodeValue))
+	f, exist := aggregateFuncToInfluxDBFunc[request.AggregateOverTimeFunction]
+	if !exist {
+		return nil, errors.Errorf(`not supported aggregate function "%d"`, request.AggregateOverTimeFunction)
+	}
+	statement.SetFunction(InternalInflux.Select, f, string(EntityInfluxMetric.NodeValue))
 	cmd := statement.BuildQueryCmd()
 
+	scope.Debugf("Query inlfuxdb: cmd: %s", cmd)
 	response, err := r.influxDB.QueryDB(cmd, string(RepoInflux.Metric))
 	if err != nil {
 		return make([]*DaoMetricTypes.NodeMetric, 0), errors.Wrap(err, "failed to list node memory metrics")

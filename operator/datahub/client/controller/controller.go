@@ -3,28 +3,34 @@ package controller
 import (
 	"context"
 
+	"github.com/pkg/errors"
+	"google.golang.org/grpc"
+
+	"github.com/containers-ai/alameda/operator/datahub/client"
 	datahub_v1alpha1 "github.com/containers-ai/api/alameda_api/v1alpha1/datahub"
 	datahub_resources "github.com/containers-ai/api/alameda_api/v1alpha1/datahub/resources"
 	appsapi_v1 "github.com/openshift/api/apps/v1"
-	"github.com/pkg/errors"
-	"google.golang.org/genproto/googleapis/rpc/code"
-	"google.golang.org/grpc"
+
 	appsv1 "k8s.io/api/apps/v1"
 )
 
 type ControllerRepository struct {
 	conn          *grpc.ClientConn
 	datahubClient datahub_v1alpha1.DatahubServiceClient
+
+	clusterUID string
 }
 
 // NewControllerRepository return ControllerRepository instance
-func NewControllerRepository(conn *grpc.ClientConn) *ControllerRepository {
+func NewControllerRepository(conn *grpc.ClientConn, clusterUID string) *ControllerRepository {
 
 	datahubClient := datahub_v1alpha1.NewDatahubServiceClient(conn)
 
 	return &ControllerRepository{
 		conn:          conn,
 		datahubClient: datahubClient,
+
+		clusterUID: clusterUID,
 	}
 }
 
@@ -35,8 +41,9 @@ func (repo *ControllerRepository) CreateControllers(arg interface{}) error {
 		for _, controller := range controllers {
 			controllersToCreate = append(controllersToCreate, &datahub_resources.Controller{
 				ObjectMeta: &datahub_resources.ObjectMeta{
-					Name:      controller.GetName(),
-					Namespace: controller.GetNamespace(),
+					Name:        controller.GetName(),
+					Namespace:   controller.GetNamespace(),
+					ClusterName: repo.clusterUID,
 				},
 				Kind: datahub_resources.Kind_DEPLOYMENT,
 			})
@@ -46,8 +53,9 @@ func (repo *ControllerRepository) CreateControllers(arg interface{}) error {
 		for _, controller := range controllers {
 			controllersToCreate = append(controllersToCreate, &datahub_resources.Controller{
 				ObjectMeta: &datahub_resources.ObjectMeta{
-					Name:      controller.GetName(),
-					Namespace: controller.GetNamespace(),
+					Name:        controller.GetName(),
+					Namespace:   controller.GetNamespace(),
+					ClusterName: repo.clusterUID,
 				},
 				Kind: datahub_resources.Kind_STATEFULSET,
 			})
@@ -58,8 +66,9 @@ func (repo *ControllerRepository) CreateControllers(arg interface{}) error {
 		for _, controller := range controllers {
 			controllersToCreate = append(controllersToCreate, &datahub_resources.Controller{
 				ObjectMeta: &datahub_resources.ObjectMeta{
-					Name:      controller.GetName(),
-					Namespace: controller.GetNamespace(),
+					Name:        controller.GetName(),
+					Namespace:   controller.GetNamespace(),
+					ClusterName: repo.clusterUID,
 				},
 				Kind: datahub_resources.Kind_DEPLOYMENTCONFIG,
 			})
@@ -73,83 +82,111 @@ func (repo *ControllerRepository) CreateControllers(arg interface{}) error {
 		Controllers: controllersToCreate,
 	}
 
-	if reqRes, err := repo.datahubClient.CreateControllers(
-		context.Background(), &req); err != nil {
-		return errors.Errorf("create controllers to datahub failed: %s", err.Error())
-	} else if reqRes == nil {
-		return errors.Errorf("create controllers to datahub failed: receive nil status")
-	} else if reqRes.Code != int32(code.Code_OK) {
-		return errors.Errorf(
-			"create controllers to datahub failed: receive statusCode: %d, message: %s",
-			reqRes.Code, reqRes.Message)
+	if resp, err := repo.datahubClient.CreateControllers(context.Background(), &req); err != nil {
+		return errors.Wrap(err, "create controllers to datahub failed")
+	} else if _, err := client.IsResponseStatusOK(resp); err != nil {
+		return errors.Wrap(err, "create controllers to datahub failed")
 	}
 	return nil
 }
 
-func (repo *ControllerRepository) ListControllers() (
-	[]*datahub_resources.Controller, error) {
-	controllers := []*datahub_resources.Controller{}
-	req := datahub_resources.ListControllersRequest{}
-	if reqRes, err := repo.datahubClient.ListControllers(
-		context.Background(), &req); err != nil {
-		if reqRes.Status != nil {
-			return controllers, errors.Errorf(
-				"list controllers from Datahub failed: %s", err.Error())
+func (repo *ControllerRepository) ListControllers() ([]*datahub_resources.Controller, error) {
+	req := datahub_resources.ListControllersRequest{
+		ObjectMeta: []*datahub_resources.ObjectMeta{
+			&datahub_resources.ObjectMeta{
+				ClusterName: repo.clusterUID,
+			},
+		},
+	}
+
+	resp, err := repo.datahubClient.ListControllers(context.Background(), &req)
+	if err != nil {
+		return nil, errors.Wrap(err, "list controllers from datahub failed")
+	} else if resp == nil {
+		return nil, errors.Errorf("list controllers from Datahub failed, receive nil response")
+	} else if _, err := client.IsResponseStatusOK(resp.Status); err != nil {
+		return nil, errors.Wrap(err, "list controllers from Datahub failed")
+	}
+	return resp.Controllers, nil
+}
+
+func (repo *ControllerRepository) ListControllersByApplication(ctx context.Context, namespace, name string) ([]*datahub_resources.Controller, error) {
+	req := datahub_resources.ListControllersRequest{
+		ObjectMeta: []*datahub_resources.ObjectMeta{
+			&datahub_resources.ObjectMeta{
+				Namespace:   namespace,
+				ClusterName: repo.clusterUID,
+			},
+		},
+	}
+
+	resp, err := repo.datahubClient.ListControllers(ctx, &req)
+	if err != nil {
+		return nil, errors.Wrap(err, "list controllers from datahub failed")
+	} else if resp == nil {
+		return nil, errors.Errorf("list controllers from Datahub failed, receive nil response")
+	} else if _, err := client.IsResponseStatusOK(resp.Status); err != nil {
+		return nil, errors.Wrap(err, "list controllers from Datahub failed")
+	}
+	controllers := make([]*datahub_resources.Controller, 0, len(resp.Controllers))
+	for _, controller := range resp.Controllers {
+		copyController := *controller
+		if controller != nil && repo.isControllerHasApplicationInfo(*controller, namespace, name) {
+			controllers = append(controllers, &copyController)
 		}
-		return controllers, err
-	} else {
-		controllers = reqRes.GetControllers()
 	}
 	return controllers, nil
 }
 
-// DeleteController delete controllers from datahub
-func (repo *ControllerRepository) DeleteControllers(arg interface{},
-	kindIf interface{}) error {
+// DeleteControllers delete controllers from datahub
+func (repo *ControllerRepository) DeleteControllers(ctx context.Context, arg interface{}, kindIf interface{}) error {
 	objMeta := []*datahub_resources.ObjectMeta{}
-	kind := datahub_resources.Kind_POD
+	kind := datahub_resources.Kind_KIND_UNDEFINED
 
-	if controllers, ok := arg.([]*appsv1.Deployment); ok {
+	switch v := arg.(type) {
+	case []*appsv1.Deployment:
 		kind = datahub_resources.Kind_DEPLOYMENT
-		for _, controller := range controllers {
+		for _, controller := range v {
 			objMeta = append(objMeta, &datahub_resources.ObjectMeta{
-				Name:      controller.GetName(),
-				Namespace: controller.GetNamespace(),
+				Name:        controller.GetName(),
+				Namespace:   controller.GetNamespace(),
+				ClusterName: repo.clusterUID,
 			})
 		}
-	}
-	if controllers, ok := arg.([]*appsv1.StatefulSet); ok {
+	case []*appsv1.StatefulSet:
 		kind = datahub_resources.Kind_STATEFULSET
-		for _, controller := range controllers {
+		for _, controller := range v {
 			objMeta = append(objMeta, &datahub_resources.ObjectMeta{
-				Name:      controller.GetName(),
-				Namespace: controller.GetNamespace(),
+				Name:        controller.GetName(),
+				Namespace:   controller.GetNamespace(),
+				ClusterName: repo.clusterUID,
 			})
 		}
-	}
-	if controllers, ok := arg.([]*appsapi_v1.DeploymentConfig); ok {
+	case []*appsapi_v1.DeploymentConfig:
 		kind = datahub_resources.Kind_DEPLOYMENTCONFIG
-		for _, controller := range controllers {
+		for _, controller := range v {
 			objMeta = append(objMeta, &datahub_resources.ObjectMeta{
-				Name:      controller.GetName(),
-				Namespace: controller.GetNamespace(),
+				Name:        controller.GetName(),
+				Namespace:   controller.GetNamespace(),
+				ClusterName: repo.clusterUID,
 			})
 		}
-	}
-	if controllers, ok := arg.([]*datahub_resources.Controller); ok {
-		for _, controller := range controllers {
+	case []*datahub_resources.Controller:
+		for _, controller := range v {
 			kind = controller.GetKind()
 			objMeta = append(objMeta, &datahub_resources.ObjectMeta{
-				Name:      controller.GetObjectMeta().GetName(),
-				Namespace: controller.GetObjectMeta().GetNamespace(),
+				Name:        controller.GetObjectMeta().GetName(),
+				Namespace:   controller.GetObjectMeta().GetNamespace(),
+				ClusterName: repo.clusterUID,
 			})
 		}
-	}
-	if meta, ok := arg.([]*datahub_resources.ObjectMeta); ok {
+	case []*datahub_resources.ObjectMeta:
 		if theKind, ok := kindIf.(datahub_resources.Kind); ok {
 			kind = theKind
-			objMeta = meta
+			objMeta = v
 		}
+	default:
+		return errors.Errorf("not supported type(%T)", v)
 	}
 
 	req := datahub_resources.DeleteControllersRequest{
@@ -157,18 +194,25 @@ func (repo *ControllerRepository) DeleteControllers(arg interface{},
 		Kind:       kind,
 	}
 
-	if resp, err := repo.datahubClient.DeleteControllers(
-		context.Background(), &req); err != nil {
-		return errors.Errorf("delete controller from Datahub failed: %s",
-			err.Error())
-	} else if resp.Code != int32(code.Code_OK) {
-		return errors.Errorf(
-			"delete controller from Datahub failed: receive code: %d, message: %s",
-			resp.Code, resp.Message)
+	resp, err := repo.datahubClient.DeleteControllers(ctx, &req)
+	if err != nil {
+		return errors.Wrap(err, "delete controllers from Datahub failed")
+	} else if _, err := client.IsResponseStatusOK(resp); err != nil {
+		return errors.Wrap(err, "delete controllers from Datahub failed")
 	}
 	return nil
 }
 
 func (repo *ControllerRepository) Close() {
 	repo.conn.Close()
+}
+
+func (repo *ControllerRepository) isControllerHasApplicationInfo(controller datahub_resources.Controller, appNamespace, appName string) bool {
+
+	if controller.AlamedaControllerSpec != nil && controller.AlamedaControllerSpec.AlamedaScaler != nil &&
+		controller.AlamedaControllerSpec.AlamedaScaler.Namespace == appNamespace && controller.AlamedaControllerSpec.AlamedaScaler.Name == appName {
+		return true
+	}
+
+	return false
 }

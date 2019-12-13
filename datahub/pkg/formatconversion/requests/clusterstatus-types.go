@@ -5,13 +5,16 @@ import (
 	"github.com/containers-ai/api/alameda_api/v1alpha1/datahub/resources"
 )
 
-func NewAlamedaControllerSpec(controllerSpec *resources.AlamedaControllerSpec) types.AlamedaControllerSpec {
+func NewAlamedaControllerSpec(controllerSpec *resources.AlamedaControllerSpec) *types.AlamedaControllerSpec {
+	objectMeta := NewObjectMeta(controllerSpec.GetAlamedaScaler())
+
 	spec := types.AlamedaControllerSpec{
-		AlamedaScaler:   NewObjectMeta(controllerSpec.GetAlamedaScaler()),
+		AlamedaScaler:   &objectMeta,
+		ScalingTool:     controllerSpec.GetScalingTool().String(),
 		Policy:          controllerSpec.GetPolicy().String(),
 		EnableExecution: controllerSpec.GetEnableRecommendationExecution(),
 	}
-	return spec
+	return &spec
 }
 
 func NewAlamedaPodSpec(podSpec *resources.AlamedaPodSpec) *types.AlamedaPodSpec {
@@ -24,6 +27,15 @@ func NewAlamedaPodSpec(podSpec *resources.AlamedaPodSpec) *types.AlamedaPodSpec 
 		spec.UsedRecommendationId = podSpec.GetUsedRecommendationId()
 		spec.AlamedaScalerResources = NewResourceRequirements(podSpec.GetAlamedaScalerResources())
 		spec.ScalingTool = podSpec.GetScalingTool().String()
+		return spec
+	}
+	return nil
+}
+
+func NewAlamedaApplicationSpec(applicationSpec *resources.AlamedaApplicationSpec) *types.AlamedaApplicationSpec {
+	if applicationSpec != nil {
+		spec := &types.AlamedaApplicationSpec{}
+		spec.ScalingTool = applicationSpec.GetScalingTool().String()
 		return spec
 	}
 	return nil

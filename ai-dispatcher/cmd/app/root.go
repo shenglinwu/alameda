@@ -1,16 +1,21 @@
 package app
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/containers-ai/alameda/ai-dispatcher/pkg/dispatcher"
 	"github.com/containers-ai/alameda/ai-dispatcher/pkg/metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/streadway/amqp"
 
 	alameda_app "github.com/containers-ai/alameda/cmd/app"
 	"github.com/containers-ai/alameda/pkg/utils/log"
+	datahubv1alpha1 "github.com/containers-ai/api/alameda_api/v1alpha1/datahub"
+	datahub_resources "github.com/containers-ai/api/alameda_api/v1alpha1/datahub/resources"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,6 +27,7 @@ var (
 	logRotateOutputFile string
 
 	scope *log.Scope
+	conn  *grpc.ClientConn
 )
 
 func launchMetricServer() {
@@ -62,18 +68,31 @@ var rootCmd = &cobra.Command{
 			return
 		}
 		datahubConnRetry := viper.GetInt("datahub.connRetry")
-		conn, err := grpc.Dial(datahubAddr, grpc.WithInsecure(),
-			grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(
-				grpc_retry.WithMax(uint(datahubConnRetry)))))
-		if err != nil {
-			scope.Errorf("Datahub connection constructs failed. %s", err.Error())
-			return
-		}
-
 		queueURL := viper.GetString("queue.url")
 		if queueURL == "" {
 			scope.Errorf("No configuration of queue url.")
 			return
+		}
+
+		for {
+			amqConn, err := amqp.Dial(queueURL)
+			if err == nil {
+				amqConn.Close()
+				break
+			} else {
+				scope.Errorf("connect queue failed on init: %s", err.Error())
+			}
+			time.Sleep(time.Duration(1) * time.Second)
+		}
+
+		for {
+			conn, _ = grpc.Dial(datahubAddr, grpc.WithInsecure(),
+				grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(
+					grpc_retry.WithMax(uint(datahubConnRetry)))))
+			if checkResourceIsExist(conn) {
+				break
+			}
+			time.Sleep(time.Duration(1) * time.Second)
 		}
 
 		defer conn.Close()
@@ -89,6 +108,33 @@ var rootCmd = &cobra.Command{
 			modelMapper, metricExporter)
 		dp.Start()
 	},
+}
+
+func checkResourceIsExist(conn *grpc.ClientConn) bool {
+	datahubClient := datahubv1alpha1.NewDatahubServiceClient(conn)
+	nodeResult, err := datahubClient.ListNodes(context.Background(), &datahub_resources.ListNodesRequest{})
+	nodeCount := len(nodeResult.GetNodes())
+	if err != nil || nodeCount <= 0 {
+		if err != nil {
+			scope.Errorf("ListNodes failed on init: %s", err.Error())
+		}
+		if nodeCount <= 0 {
+			scope.Errorf("ListNodes is empty on init")
+		}
+		return false
+	}
+	clusterResult, err := datahubClient.ListClusters(context.Background(), &datahub_resources.ListClustersRequest{})
+	clusterCount := len(clusterResult.GetClusters())
+	if err != nil || clusterCount <= 0 {
+		if err != nil {
+			scope.Errorf("ListClusters failed on init: %s", err.Error())
+		}
+		if clusterCount <= 0 {
+			scope.Errorf("ListClusters is empty on init")
+		}
+		return false
+	}
+	return true
 }
 
 func Execute() {

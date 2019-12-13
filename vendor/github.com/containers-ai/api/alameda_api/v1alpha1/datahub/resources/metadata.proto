@@ -8,11 +8,11 @@ option go_package = "github.com/containers-ai/api/alameda_api/v1alpha1/datahub/r
 
 // Represents kubernetes resource kind
 enum Kind {
-    POD              = 0;
+    KIND_UNDEFINED   = 0;
     DEPLOYMENT       = 1;
     DEPLOYMENTCONFIG = 2;
-    ALAMEDASCALER    = 3;
-    STATEFULSET      = 4;
+    STATEFULSET      = 3;
+    ALAMEDASCALER    = 4;
 }
 
 enum ScalingTool {

@@ -1,23 +1,27 @@
 {
   "annotations": {
-    "list": [{
-      "builtIn": 1,
-      "datasource": "-- Grafana --",
-      "enable": true,
-      "hide": true,
-      "iconColor": "rgba(0, 211, 255, 1)",
-      "name": "Annotations & Alerts",
-      "type": "dashboard"
-    }]
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
   },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 14,
-  "iteration": 1566901059423,
+  "id": 17,
+  "iteration": 1576208889771,
   "links": [],
-  "panels": [{
+  "panels": [
+    {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -31,6 +35,7 @@
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"config_provider\" style=\"display:block; margin-left:auto; margin-right:auto;\">\n    </td>\n  </tr>\n</table>\n<script>\n  var currentProvider = `${current_provider}`.toLowerCase();\n  if (currentProvider === 'aws') {\n    document.getElementById('config_provider').src = 'https://d1.awsstatic.com/gamedev/gamelift/awshomepage.8845ec5b83a849d57f677cf9010c25abd357ea2e.PNG';\n  } else if ( currentProvider === 'azure') {\n    document.getElementById('config_provider').src = 'https://www.net4all.ch/wp-content/uploads/sites/4/2018/04/azure-logo_200x200.png';\n    document.getElementById('config_provider').style.height = '50%';\n    document.getElementById('config_provider').style.width = '50%';\n  } else if ( currentProvider === 'gcp') {\n    document.getElementById('config_provider').src = 'https://miro.medium.com/max/1200/1*eSQnSxgOwNWtjsnbBl3w4A.png';\n    document.getElementById('config_provider').style.height = '40%';\n  }\n  //document.getElementById('config_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'black'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -40,11 +45,13 @@
       "id": 34,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Current Provider",
       "type": "text"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"config_cost\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px; color:black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var cost = `$${$current_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per month</div>`;\n  document.getElementById('config_cost').innerHTML = cost;\n  document.getElementById('config_cost').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -54,11 +61,13 @@
       "id": 94,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Current Cost",
       "type": "text"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"config_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${current_region}`;\n  document.getElementById('config_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -68,6 +77,7 @@
       "id": 40,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -84,6 +94,7 @@
       },
       "id": 5,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -91,7 +102,8 @@
         "col": 2,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -208,52 +220,56 @@
           "unit": "short"
         }
       ],
-      "targets": [{
-        "expr": "count(up{job=\"kubernetes-nodes\"})",
-        "format": "table",
-        "groupBy": [{
-            "params": [
-              "$__interval"
-            ],
-            "type": "time"
-          },
-          {
-            "params": [
-              "null"
-            ],
-            "type": "fill"
-          }
-        ],
-        "hide": false,
-        "intervalFactor": 1,
-        "orderByTime": "ASC",
-        "policy": "default",
-        "query": "select  \"name\", io_role, io_instance_type, node_cpu_cores, node_memory_bytes, io_storage_size from alameda_cluster_status..node\n",
-        "rawQuery": true,
-        "refId": "A",
-        "resultFormat": "table",
-        "select": [
-          [{
+      "targets": [
+        {
+          "expr": "count(up{job=\"kubernetes-nodes\"})",
+          "format": "table",
+          "groupBy": [
+            {
               "params": [
-                "value"
+                "$__interval"
               ],
-              "type": "field"
+              "type": "time"
             },
             {
-              "params": [],
-              "type": "mean"
+              "params": [
+                "null"
+              ],
+              "type": "fill"
             }
-          ]
-        ],
-        "tags": []
-      }],
+          ],
+          "hide": false,
+          "intervalFactor": 1,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select  \"name\", io_role, io_instance_type, node_cpu_cores, node_memory_bytes, io_storage_size from alameda_cluster_status..node\n",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
       "title": "Current Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -272,6 +288,7 @@
       "dashes": false,
       "datasource": "-- Mixed --",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 24,
@@ -293,20 +310,24 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [{
+      "seriesOverrides": [
+        {
           "alias": "Prediction: CPU usage",
-          "color": "#f9e2d2",
+          "color": "#93d6d6",
           "dashLength": 5,
           "dashes": true,
           "spaceLength": 4
         },
         {
           "alias": "Prediction: memory usage",
-          "color": "#f9e2d2",
+          "color": "#6285e3",
           "dashLength": 5,
           "dashes": true,
           "spaceLength": 4
@@ -323,9 +344,10 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
+      "targets": [
+        {
           "datasource": "Prometheus",
-          "expr": "sum( 1000 * max_over_time(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace=~\"$h_ns\", pod_name=~\"$h_pod\", container_name=~\"$h_container\", container_name!=\"\"}[3600s])) / $current_cpu_total",
+          "expr": "sum(1000 * avg_over_time(node:node_cpu_utilisation:avg1m{node=~\"$node\"}[3600s]) * avg_over_time(node:node_num_cpu:sum{node=~\"$node\"}[3600s]) * 100) / ($current_cpu_total * 1000)",
           "format": "time_series",
           "hide": false,
           "interval": "3600s",
@@ -335,7 +357,7 @@
         },
         {
           "datasource": "Prometheus",
-          "expr": "sum(max_over_time(container_memory_usage_bytes{namespace=~\"$h_ns\", pod_name=~\"$h_pod\", container_name=~\"$h_container\", container_name!=\"\"}[3600s])) * 100 / $current_memory_total",
+          "expr": "sum (avg_over_time(node:node_memory_bytes_total:sum{node=~\"$node\"}[3600s]) * avg_over_time(node:node_memory_utilisation_2:{node=~\"$node\"}[3600s])) * 100 / $current_memory_total",
           "format": "time_series",
           "hide": false,
           "interval": "3600s",
@@ -348,7 +370,8 @@
           "datasource": "InfluxDB",
           "expr": "",
           "format": "time_series",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -365,12 +388,13 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select sum(value)/ $current_cpu_total from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '3600' and \"metric\" = 'cpu_usage_seconds_percentage' and \"namespace\" =~ /^[[h_ns]]$/  and \"pod_name\" =~ /^[[h_pod]]$/ and  time >= now() -5d and time < now() group by time(3600s)), (select sum from (select sum(value)/ $current_cpu_total, count(value) from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '3600' and \"metric\" = 'cpu_usage_seconds_percentage' and \"namespace\" =~ /^[[h_ns]]$/  and \"pod_name\" =~ /^[[h_pod]]$/ and  time >= now() -3600s  and time <= now()+1d  group by time(3600s)) where count = $count_container + 0)",
+          "query": "select (sum(value) * 100) / ($current_cpu_total * 1000) from \"alameda_prediction\"..\"cluster\" where kind = 'raw' and granularity = '3600' and \"metric\" = 'cpu_usage_seconds_percentage' and time >= now() - 5d and time <= now() + 1d group by time(3600s)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -387,7 +411,8 @@
         {
           "alias": "Prediction: memory usage",
           "datasource": "InfluxDB",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -403,12 +428,91 @@
           "hide": false,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select sum(value)*100/$current_memory_total from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '3600' and \"metric\" = 'memory_usage_bytes' and \"name\" =~ /^[[h_container]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and \"namespace\" =~ /^[[h_ns]]$/ and  time >= now() -5d and time < now() group by time(3600s)), (select sum from (select sum(value) *100/$current_memory_total, count(value)  from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '3600' and \"metric\" = 'memory_usage_bytes' and \"name\" =~ /^[[h_container]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and \"namespace\" =~ /^[[h_ns]]$/ and  time >= now()-3600s  and time <= now()+1d group by time(3600s)) where count = $count_container + 0)",
+          "query": "select sum(value) * 100 / $current_memory_total from \"alameda_prediction\"..\"cluster\" where kind = 'raw' and granularity = '3600' and \"metric\" = 'memory_usage_bytes' and time >= now() - 5d and time <= now() + 1d group by time(3600s)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
-            [{
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Observation : CPU Usage",
+          "datasource": "InfluxDB",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select (mean(value)*100) / ($current_cpu_total * 1000) from alameda_metric..cluster_cpu where time >= now() -5d and time <= now() and 'true' = '$preloader' and 'Cluster' = '$resource' group by time(3600s)",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Observation: memory usage",
+          "datasource": "InfluxDB",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select mean(value)*100 / $current_memory_total from alameda_metric..cluster_memory where time >= now() -5d and time <= now() and 'true' = '$preloader' and 'Cluster' = '$resource' group by time(3600s)",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -441,7 +545,8 @@
         "show": true,
         "values": []
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 2,
           "format": "percent",
           "label": null,
@@ -467,6 +572,7 @@
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"daily_aws_provider\" style=\"display:block; margin-left:auto; margin-right:auto;\" src=\"https://d1.awsstatic.com/gamedev/gamelift/awshomepage.8845ec5b83a849d57f677cf9010c25abd357ea2e.PNG\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('daily_aws_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -476,11 +582,13 @@
       "id": 57,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_aws\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$daily_aws_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per day</div>`;\n  document.getElementById('daily_aws').innerHTML = price;\n  document.getElementById('daily_aws').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n</style>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_aws\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var message = ''\n  if ('$daily_aws_cost'.trim() == '' || '$daily_aws_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$daily_aws_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per day</div>';\n  }\n  document.getElementById('daily_aws').innerHTML = message;\n  document.getElementById('daily_aws').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n</style>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -490,11 +598,13 @@
       "id": 54,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_aws_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${daily_aws_region}`;\n  document.getElementById('daily_aws_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_aws_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${daily_aws_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('daily_aws_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -504,6 +614,7 @@
       "id": 58,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -520,6 +631,7 @@
       },
       "id": 84,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -527,7 +639,8 @@
         "col": 11,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -631,7 +744,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -664,10 +777,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -689,7 +804,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -704,7 +820,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -725,7 +842,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -742,11 +860,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"daily_azure_provider\" style=\"display:block; margin-left:auto; margin-right:auto; width:50%; height:50%\" src=\"https://www.net4all.ch/wp-content/uploads/sites/4/2018/04/azure-logo_200x200.png\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('daily_azure_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -756,11 +874,13 @@
       "id": 60,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_azure\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$daily_azure_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per day</div>`;\n  document.getElementById('daily_azure').innerHTML = price;\n  document.getElementById('daily_azure').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_azure\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n var message = ''\n  if ('$daily_azure_cost'.trim() == '' || '$daily_azure_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$daily_azure_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per day</div>';\n  }\n  document.getElementById('daily_azure').innerHTML = message;\n  document.getElementById('daily_azure').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -770,11 +890,13 @@
       "id": 55,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_azure_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region =  `${daily_azure_region}`;\n  document.getElementById('daily_azure_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_azure_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region =  `${daily_azure_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('daily_azure_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -784,6 +906,7 @@
       "id": 62,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -800,6 +923,7 @@
       },
       "id": 85,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -807,7 +931,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -911,7 +1036,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -944,10 +1069,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -969,7 +1096,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -984,7 +1112,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1005,7 +1134,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1022,11 +1152,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n       <img id=\"daily_gcp_provider\" style=\"display:block; margin-left:auto; margin-right:auto;height:25%;\" src=\"https://www.abacoinformatica.com/wp-content/uploads/2019/03/Google-Cloud-Platform.png\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('daily_gcp_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -1036,11 +1166,13 @@
       "id": 63,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_gcp\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$daily_gcp_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per day</div>`;\n  document.getElementById('daily_gcp').innerHTML = price;\n  document.getElementById('daily_gcp').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_gcp\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n var message = ''\n  if ('$daily_gcp_cost'.trim() == '' || '$daily_gcp_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$daily_gcp_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per day</div>';\n  }\n document.getElementById('daily_gcp').innerHTML = message;\n  document.getElementById('daily_gcp').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1050,11 +1182,13 @@
       "id": 56,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_gcp_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region =  `${daily_gcp_region}`;\n  document.getElementById('daily_gcp_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"daily_gcp_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region =  `${daily_gcp_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('daily_gcp_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1064,6 +1198,7 @@
       "id": 68,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -1080,6 +1215,7 @@
       },
       "id": 86,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -1087,7 +1223,8 @@
         "col": 5,
         "desc": true
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -1108,10 +1245,12 @@
           "thresholds": [],
           "type": "string",
           "unit": "short",
-          "valueMaps": [{
-            "text": "8.00 GB",
-            "value": "1"
-          }]
+          "valueMaps": [
+            {
+              "text": "8.00 GB",
+              "value": "1"
+            }
+          ]
         },
         {
           "alias": "Master(On-demand)",
@@ -1195,7 +1334,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -1228,10 +1367,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1253,7 +1394,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1268,7 +1410,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1288,7 +1431,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1305,11 +1449,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1328,6 +1472,7 @@
       "dashes": false,
       "datasource": "-- Mixed --",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 24,
@@ -1349,20 +1494,24 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [{
+      "seriesOverrides": [
+        {
           "alias": "Prediction: CPU usage",
-          "color": "#f9e2d2",
+          "color": "#93d6d6",
           "dashLength": 5,
           "dashes": true,
           "spaceLength": 4
         },
         {
           "alias": "Prediction: memory usage",
-          "color": "#f9e2d2",
+          "color": "#6285e3",
           "dashLength": 5,
           "dashes": true,
           "spaceLength": 4
@@ -1379,9 +1528,10 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
+      "targets": [
+        {
           "datasource": "Prometheus",
-          "expr": "sum( 1000 * max_over_time(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace=~\"$h_ns\", pod_name=~\"$h_pod\", container_name=~\"$h_container\", container_name!=\"\"}[21600s])) / $current_cpu_total",
+          "expr": "sum(1000 * avg_over_time(node:node_cpu_utilisation:avg1m{node=~\"$node\"}[21600s]) * avg_over_time(node:node_num_cpu:sum{node=~\"$node\"}[21600s]) * 100) / ($current_cpu_total * 1000)",
           "format": "time_series",
           "interval": "21600s",
           "intervalFactor": 1,
@@ -1390,7 +1540,7 @@
         },
         {
           "datasource": "Prometheus",
-          "expr": "sum(max_over_time(container_memory_usage_bytes{namespace=~\"$h_ns\", pod_name=~\"$h_pod\", container_name=~\"$h_container\", container_name!=\"\"}[21600s])) * 100 / $current_memory_total",
+          "expr": "sum (avg_over_time(node:node_memory_bytes_total:sum{node=~\"$node\"}[21600s]) * avg_over_time(node:node_memory_utilisation_2:{node=~\"$node\"}[21600s])) * 100 / $current_memory_total",
           "format": "time_series",
           "interval": "21600s",
           "intervalFactor": 1,
@@ -1402,7 +1552,8 @@
           "datasource": "InfluxDB",
           "expr": "",
           "format": "time_series",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1419,12 +1570,13 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select sum(value)/ $current_cpu_total from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '21600' and \"metric\" = 'cpu_usage_seconds_percentage' and \"namespace\" =~ /^[[h_ns]]$/  and \"pod_name\" =~ /^[[h_pod]]$/ and  time >= now() -5w and time < now() group by time(21600s)), (select sum from( select sum(value)/ $current_cpu_total, count(value) from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '21600' and \"metric\" = 'cpu_usage_seconds_percentage' and \"namespace\" =~ /^[[h_ns]]$/  and \"pod_name\" =~ /^[[h_pod]]$/ and  time >= now() -21600s   and time <= now()+1w group by time(21600s)) where count = $count_container + 0)",
+          "query": "select (sum(value) * 100) / ($current_cpu_total * 1000) from \"alameda_prediction\"..\"cluster\" where kind = 'raw' and granularity = '21600' and \"metric\" = 'cpu_usage_seconds_percentage' and time >= now() - 5w and time <= now() + 1w group by time(21600s)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1441,7 +1593,8 @@
         {
           "alias": "Prediction: memory usage",
           "datasource": "InfluxDB",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1457,12 +1610,91 @@
           "hide": false,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select sum(value)*100/$current_memory_total from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '21600' and \"metric\" = 'memory_usage_bytes' and \"name\" =~ /^[[h_container]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and \"namespace\" =~ /^[[h_ns]]$/ and  time >= now() -5w and time < now() group by time(21600s)), (select sum from (select sum(value) *100/$current_memory_total, count(value)  from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '21600' and \"metric\" = 'memory_usage_bytes' and \"name\" =~ /^[[h_container]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and \"namespace\" =~ /^[[h_ns]]$/ and  time >= now()-21600s  and time <= now()+1w group by time(21600s)) where count = $count_container + 0)",
+          "query": "select sum(value) * 100 / $current_memory_total from \"alameda_prediction\"..\"cluster\" where kind = 'raw' and granularity = '21600' and \"metric\" = 'memory_usage_bytes' and time >= now() - 5w and time <= now() + 1w group by time(21600s)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
-            [{
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Observation : CPU Usage",
+          "datasource": "InfluxDB",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select (mean(value)*100) / ($current_cpu_total * 1000) from alameda_metric..cluster_cpu where time >= now() -5w and time <= now() and 'true' = '$preloader' and 'Cluster' = '$resource' group by time(21600s)",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Observation: memory usage",
+          "datasource": "InfluxDB",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select mean(value)*100 / $current_memory_total from alameda_metric..cluster_memory where time >= now() -5w and time <= now() and 'true' = '$preloader' and 'Cluster' = '$resource' group by time(21600s)",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1495,7 +1727,8 @@
         "show": true,
         "values": []
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 2,
           "format": "percent",
           "label": null,
@@ -1521,6 +1754,7 @@
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"weekly_aws_provider\" style=\"display:block; margin-left:auto; margin-right:auto;\" src=\"https://d1.awsstatic.com/gamedev/gamelift/awshomepage.8845ec5b83a849d57f677cf9010c25abd357ea2e.PNG\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('weekly_aws_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -1530,11 +1764,13 @@
       "id": 66,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_aws\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$weekly_aws_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per week</div>`;\n  document.getElementById('weekly_aws').innerHTML = price;\n  document.getElementById('weekly_aws').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n</style>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_aws\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n var message = ''\n  if ('$weekly_aws_cost'.trim() == '' || '$weekly_aws_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$weekly_aws_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per week</div>';\n  }\n  document.getElementById('weekly_aws').innerHTML = message;\n  document.getElementById('weekly_aws').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n</style>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1544,11 +1780,13 @@
       "id": 50,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_aws_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${weekly_aws_region}`;\n  document.getElementById('weekly_aws_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_aws_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${weekly_aws_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('weekly_aws_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1558,6 +1796,7 @@
       "id": 67,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -1574,6 +1813,7 @@
       },
       "id": 87,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -1581,7 +1821,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -1602,10 +1843,12 @@
           "thresholds": [],
           "type": "string",
           "unit": "short",
-          "valueMaps": [{
-            "text": "4.00",
-            "value": "1"
-          }]
+          "valueMaps": [
+            {
+              "text": "4.00",
+              "value": "1"
+            }
+          ]
         },
         {
           "alias": "Master(On-demand)",
@@ -1689,7 +1932,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -1722,10 +1965,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1747,7 +1992,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1762,7 +2008,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -1782,7 +2029,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -1799,11 +2047,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n     <img id=\"weekly_azure_provider\" style=\"display:block; margin-left:auto; margin-right:auto; width:50%; height:50%\" src=\"https://www.net4all.ch/wp-content/uploads/sites/4/2018/04/azure-logo_200x200.png\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('weekly_azure_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -1813,11 +2061,13 @@
       "id": 69,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_azure\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$weekly_azure_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per week</div>`;\n  document.getElementById('weekly_azure').innerHTML = price;\n  document.getElementById('weekly_azure').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_azure\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var message = ''\n  if ('$weekly_azure_cost'.trim() == '' || '$weekly_azure_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$weekly_azure_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per week</div>';\n  }\n  document.getElementById('weekly_azure').innerHTML = message;\n  document.getElementById('weekly_azure').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1827,11 +2077,13 @@
       "id": 51,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_azure_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${weekly_azure_region}`;\n  document.getElementById('weekly_azure_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_azure_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${weekly_azure_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('weekly_azure_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -1841,6 +2093,7 @@
       "id": 71,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -1857,6 +2110,7 @@
       },
       "id": 88,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -1864,7 +2118,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -1968,7 +2223,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -2001,10 +2256,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2026,7 +2283,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2041,7 +2299,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2061,7 +2320,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2078,11 +2338,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n     <img id=\"weekly_gcp_provider\" style=\"display:block; margin-left:auto; margin-right:auto;height:25%;\" src=\"https://www.abacoinformatica.com/wp-content/uploads/2019/03/Google-Cloud-Platform.png\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('weekly_gcp_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -2092,11 +2352,13 @@
       "id": 74,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_gcp\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$weekly_gcp_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per week</div>`;\n  document.getElementById('weekly_gcp').innerHTML = price;\n  document.getElementById('weekly_gcp').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_gcp\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var message = ''\n  if ('$weekly_gcp_cost'.trim() == '' || '$weekly_gcp_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$weekly_gcp_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per week</div>';\n  }\n document.getElementById('weekly_gcp').innerHTML = message;\n  document.getElementById('weekly_gcp').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2106,11 +2368,13 @@
       "id": 52,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_gcp_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${weekly_gcp_region}`;\n  document.getElementById('weekly_gcp_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"weekly_gcp_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${weekly_gcp_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('weekly_gcp_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2120,6 +2384,7 @@
       "id": 77,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -2136,6 +2401,7 @@
       },
       "id": 89,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -2143,7 +2409,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -2248,7 +2515,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -2281,10 +2548,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2306,7 +2575,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2321,7 +2591,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2341,7 +2612,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2358,11 +2630,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2381,6 +2653,7 @@
       "dashes": false,
       "datasource": "-- Mixed --",
       "fill": 0,
+      "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 24,
@@ -2402,20 +2675,24 @@
       "linewidth": 2,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [{
+      "seriesOverrides": [
+        {
           "alias": "Prediction: CPU usage",
-          "color": "#f9e2d2",
+          "color": "#93d6d6",
           "dashLength": 5,
           "dashes": true,
           "spaceLength": 4
         },
         {
           "alias": "Prediction: memory usage",
-          "color": "#f9e2d2",
+          "color": "#6285e3",
           "dashLength": 5,
           "dashes": true,
           "spaceLength": 4
@@ -2432,9 +2709,10 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
+      "targets": [
+        {
           "datasource": "Prometheus",
-          "expr": "sum( 1000 * max_over_time(namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate{namespace=~\"$h_ns\", pod_name=~\"$h_pod\", container_name=~\"$h_container\", container_name!=\"\"}[86400s])) / $current_cpu_total",
+          "expr": "sum(1000 * avg_over_time(node:node_cpu_utilisation:avg1m{node=~\"$node\"}[86400s]) * avg_over_time(node:node_num_cpu:sum{node=~\"$node\"}[86400s]) * 100) / ($current_cpu_total * 1000)",
           "format": "time_series",
           "hide": false,
           "interval": "86400s",
@@ -2444,7 +2722,7 @@
         },
         {
           "datasource": "Prometheus",
-          "expr": "sum(max_over_time(container_memory_usage_bytes{namespace=~\"$h_ns\", pod_name=~\"$h_pod\", container_name=~\"$h_container\", container_name!=\"\"}[86400s])) * 100 / $current_memory_total",
+          "expr": "sum (avg_over_time(node:node_memory_bytes_total:sum{node=~\"$node\"}[86400s]) * avg_over_time(node:node_memory_utilisation_2:{node=~\"$node\"}[86400s])) * 100 / $current_memory_total",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2456,7 +2734,8 @@
           "datasource": "InfluxDB",
           "expr": "",
           "format": "time_series",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2473,12 +2752,13 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select sum(value)/ $current_cpu_total from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '86400' and \"metric\" = 'cpu_usage_seconds_percentage' and \"namespace\" =~ /^[[h_ns]]$/  and \"pod_name\" =~ /^[[h_pod]]$/  and  time >= now() -20w and time < now() group by time(86400s)), (select sum from (select sum(value)/ $current_cpu_total, count(value) from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '86400' and \"metric\" = 'cpu_usage_seconds_percentage' and \"namespace\" =~ /^[[h_ns]]$/  and \"pod_name\" =~ /^[[h_pod]]$/ and  time >= now() and time <= now()+4w group by time(86400s)) where count = $count_container + 0)",
+          "query": "select (sum(value) * 100) / ($current_cpu_total * 1000) from \"alameda_prediction\"..\"cluster\" where kind = 'raw' and granularity = '86400' and \"metric\" = 'cpu_usage_seconds_percentage' and time >= now() - 20w and time <= now() + 4w group by time(86400s)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2495,7 +2775,8 @@
         {
           "alias": "Prediction: memory usage",
           "datasource": "InfluxDB",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2511,12 +2792,91 @@
           "hide": false,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select * from (select sum(value)*100/$current_memory_total from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '86400' and \"metric\" = 'memory_usage_bytes' and \"name\" =~ /^[[h_container]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and \"namespace\" =~ /^[[h_ns]]$/ and  time >= now() -20w and time < now() group by time(86400s)), (select sum from (select sum(value)*100/$current_memory_total , count(value)  from \"alameda_prediction\"..\"container\" where  kind = 'raw' and granularity = '86400' and \"metric\" = 'memory_usage_bytes' and \"name\" =~ /^[[h_container]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and \"namespace\" =~ /^[[h_ns]]$/ and  time >= now() and time <= now()+4w group by time(86400s)) where count = $count_container + 0)",
+          "query": "select sum(value) * 100 / $current_memory_total from \"alameda_prediction\"..\"cluster\" where kind = 'raw' and granularity = '86400' and \"metric\" = 'memory_usage_bytes' and time >= now() - 20w and time <= now() + 4w group by time(86400s)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
-            [{
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Observation : CPU Usage",
+          "datasource": "InfluxDB",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select (mean(value)*100) / ($current_cpu_total * 1000) from alameda_metric..cluster_cpu where time >= now() -20w and time <= now() and 'true' = '$preloader' and 'Cluster' = '$resource' group by time(86400s)",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "Observation: memory usage",
+          "datasource": "InfluxDB",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select mean(value)*100 / $current_memory_total from alameda_metric..cluster_memory where time >= now() -20w and time <= now() and 'true' = '$preloader' and 'Cluster' = '$resource' group by time(86400s)",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2549,7 +2909,8 @@
         "show": true,
         "values": []
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 2,
           "format": "percent",
           "label": null,
@@ -2575,6 +2936,7 @@
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"monthly_aws_provider\" style=\"display:block; margin-left:auto; margin-right:auto;\" src=\"https://d1.awsstatic.com/gamedev/gamelift/awshomepage.8845ec5b83a849d57f677cf9010c25abd357ea2e.PNG\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('monthly_aws_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -2584,11 +2946,13 @@
       "id": 75,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_aws\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px; color:black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$monthly_aws_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per month</div>`;\n  document.getElementById('monthly_aws').innerHTML = price;\n  document.getElementById('monthly_aws').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n</style>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_aws\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px; color:black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var message = ''\n  if ('$monthly_aws_cost'.trim() == '' || '$monthly_aws_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$monthly_aws_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per month</div>';\n  }\n  document.getElementById('monthly_aws').innerHTML = message;\n  document.getElementById('monthly_aws').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n</style>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2598,11 +2962,13 @@
       "id": 28,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_aws_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${monthly_aws_region}`;\n  document.getElementById('monthly_aws_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_aws_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${monthly_aws_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('monthly_aws_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2612,6 +2978,7 @@
       "id": 72,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -2628,6 +2995,7 @@
       },
       "id": 90,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -2635,7 +3003,8 @@
         "col": 11,
         "desc": true
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -2739,7 +3108,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -2772,10 +3141,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2797,7 +3168,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2812,7 +3184,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -2832,7 +3205,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -2849,11 +3223,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"monthly_azure_provider\" style=\"display:block; margin-left:auto; margin-right:auto; width:50%; height:50%\" src=\"https://www.net4all.ch/wp-content/uploads/sites/4/2018/04/azure-logo_200x200.png\">\n    </td>\n  </tr>\n</table>\n<script>\n  //document.getElementById('monthly_azure_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -2863,11 +3237,13 @@
       "id": 78,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_azure\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color:black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$monthly_azure_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per month</div>`;\n  document.getElementById('monthly_azure').innerHTML = price;\n  document.getElementById('monthly_azure').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_azure\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px;color:black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var message = ''\n  if ('$monthly_azure_cost'.trim() == '' || '$monthly_azure_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$monthly_azure_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per month</div>';\n  }\n document.getElementById('monthly_azure').innerHTML = message;\n  document.getElementById('monthly_azure').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2877,11 +3253,13 @@
       "id": 30,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_azure_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${monthly_azure_region}`;\n  document.getElementById('monthly_azure_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_azure_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${monthly_azure_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('monthly_azure_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -2891,6 +3269,7 @@
       "id": 82,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -2907,6 +3286,7 @@
       },
       "id": 91,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -2914,7 +3294,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -2935,10 +3316,12 @@
           "thresholds": [],
           "type": "string",
           "unit": "short",
-          "valueMaps": [{
-            "text": "4.00",
-            "value": "1"
-          }]
+          "valueMaps": [
+            {
+              "text": "4.00",
+              "value": "1"
+            }
+          ]
         },
         {
           "alias": "Master(On-demand)",
@@ -3022,7 +3405,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -3055,10 +3438,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -3080,7 +3465,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -3095,7 +3481,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -3110,12 +3497,13 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select displayname, masterondemandnum, masterrinum, workerondemandnum, workerrinum, totalcost from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'azure'  and \"reservedinstances\" = '0' and 'No' = '$purchase_option' and starttime = '$azure_stime_month' and country = '$country'",
+          "query": "select displayname, masterondemandnum, \"\" as masterrinum, workerondemandnum, \"\" as workerrinum, totalcost from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'azure'  and \"reservedinstances\" = '0' and 'No' = '$purchase_option' and starttime = '$azure_stime_month' and country = '$country'",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -3132,11 +3520,11 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"monthly_gcp_provider\" style=\"display:block; margin-left:auto; margin-right:auto;height:25%;\" src=\"https://www.abacoinformatica.com/wp-content/uploads/2019/03/Google-Cloud-Platform.png\">\n    </td>\n  </tr>\n</table>\n<script>\n  // https://miro.medium.com/max/1200/1*eSQnSxgOwNWtjsnbBl3w4A.png\n  //document.getElementById('monthly_gcp_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'darkgoldenrod'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -3146,11 +3534,13 @@
       "id": 79,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Recommended Provider",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_gcp\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px; color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var price = `$${$monthly_gcp_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per month</div>`;\n  document.getElementById('monthly_gcp').innerHTML = price;\n  document.getElementById('monthly_gcp').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_gcp\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px; color: black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n var message = ''\n  if ('$monthly_gcp_cost'.trim() == '' || '$monthly_gcp_cost' == null) {\n    message = '<div style=\"font-size:18px; color:black\">No data to show</div>'\n  } else {\n    message = '$' + Number('$monthly_gcp_cost').toFixed(2) + '<div style=\"font-size:18px; color:black\">per month</div>';\n  }\n  document.getElementById('monthly_gcp').innerHTML = message;\n  document.getElementById('monthly_gcp').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue'\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -3160,11 +3550,13 @@
       "id": 32,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Estimated Cost",
       "type": "text"
     },
     {
-      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_gcp_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${monthly_gcp_region}`;\n  document.getElementById('monthly_gcp_region').innerHTML = region;\n</script>",
+      "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"monthly_gcp_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${monthly_gcp_region}` || '<div style=\"font-size:18px;\">No data to show</div>';\n  document.getElementById('monthly_gcp_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -3174,6 +3566,7 @@
       "id": 83,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -3190,6 +3583,7 @@
       },
       "id": 92,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -3197,7 +3591,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -3301,7 +3696,7 @@
           "pattern": "totalcost",
           "thresholds": [],
           "type": "number",
-          "unit": "short"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -3334,10 +3729,12 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "expr": "count(up{job=\"kubernetes-nodes\"})",
           "format": "table",
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -3359,7 +3756,8 @@
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -3374,7 +3772,8 @@
           "tags": []
         },
         {
-          "groupBy": [{
+          "groupBy": [
+            {
               "params": [
                 "$__interval"
               ],
@@ -3394,7 +3793,8 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
+            [
+              {
                 "params": [
                   "value"
                 ],
@@ -3411,16 +3811,16 @@
       ],
       "title": "Cluster Configuration",
       "transform": "table",
-      "transparent": false,
       "type": "table"
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 16,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": [{
+    "list": [
+      {
         "allValue": null,
         "current": {
           "selected": true,
@@ -3432,7 +3832,8 @@
         "label": "Scope",
         "multi": false,
         "name": "resource",
-        "options": [{
+        "options": [
+          {
             "selected": true,
             "text": "Cluster",
             "value": "Cluster"
@@ -3450,18 +3851,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "nginx",
-          "value": "nginx"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "show tag values on alameda_cluster_status from container with key=\"alameda_scaler_namespace\" where 'Cluster' != '$resource'",
+        "definition": "show tag values on alameda_cluster_status from pod with key=\"namespace\" where 'Cluster' != '$resource'",
         "hide": 2,
         "includeAll": false,
         "label": "Namespace",
         "multi": false,
         "name": "ns",
         "options": [],
-        "query": "show tag values on alameda_cluster_status from container with key=\"alameda_scaler_namespace\" where 'Cluster' != '$resource'",
+        "query": "show tag values on alameda_cluster_status from pod with key=\"namespace\" where 'Cluster' != '$resource'",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3484,7 +3885,8 @@
         "label": "RI Consideration",
         "multi": false,
         "name": "purchase_option",
-        "options": [{
+        "options": [
+          {
             "selected": false,
             "text": "Yes",
             "value": "Yes"
@@ -3532,14 +3934,14 @@
           "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "show tag values on alameda_cluster_status from container with key=\"alameda_scaler_name\"  where \"alameda_scaler_namespace\" = '$ns'  and 'Namespace' != '$resource'",
+        "definition": "show tag values on alameda_cluster_status from pod with key=\"alameda_scaler_name\"  where \"namespace\" = '$ns'  and 'Namespace' != '$resource'",
         "hide": 2,
         "includeAll": false,
         "label": "Application",
         "multi": false,
         "name": "scaler",
         "options": [],
-        "query": "show tag values on alameda_cluster_status from container with key=\"alameda_scaler_name\"  where \"alameda_scaler_namespace\" = '$ns'  and 'Namespace' != '$resource'",
+        "query": "show tag values on alameda_cluster_status from pod with key=\"alameda_scaler_name\"  where \"namespace\" = '$ns'  and 'Namespace' != '$resource'",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3558,14 +3960,14 @@
           "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "show tag values on alameda_cluster_status from container with key=\"pod_name\" where \"alameda_scaler_namespace\" = '$ns' and \"alameda_scaler_name\" = '$scaler' and 'Container' = '$resource'",
+        "definition": "show tag values on alameda_cluster_status from pod with key=\"name\" where \"namespace\" = '$ns' and \"alameda_scaler_name\" = '$scaler' and 'Container' = '$resource'",
         "hide": 2,
         "includeAll": false,
         "label": "Pod",
         "multi": false,
         "name": "pod",
         "options": [],
-        "query": "show tag values on alameda_cluster_status from container with key=\"pod_name\" where \"alameda_scaler_namespace\" = '$ns' and \"alameda_scaler_name\" = '$scaler' and 'Container' = '$resource'",
+        "query": "show tag values on alameda_cluster_status from pod with key=\"name\" where \"namespace\" = '$ns' and \"alameda_scaler_name\" = '$scaler' and 'Container' = '$resource'",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3584,14 +3986,14 @@
           "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "show tag values on alameda_cluster_status from container with key=\"name\" where \"alameda_scaler_namespace\" = '$ns' and \"alameda_scaler_name\" = '$scaler' and \"pod_name\" = '$pod' and 'Container' = '$resource'",
+        "definition": "show tag values on alameda_cluster_status from container with key=\"name\" where \"pod_name\" = '$pod' and 'Container' = '$resource'",
         "hide": 2,
         "includeAll": false,
         "label": "Container",
         "multi": false,
         "name": "container",
         "options": [],
-        "query": "show tag values on alameda_cluster_status from container with key=\"name\" where \"alameda_scaler_namespace\" = '$ns' and \"alameda_scaler_name\" = '$scaler' and \"pod_name\" = '$pod' and 'Container' = '$resource'",
+        "query": "show tag values on alameda_cluster_status from container with key=\"name\" where \"pod_name\" = '$pod' and 'Container' = '$resource'",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3609,14 +4011,14 @@
           "value": "$__all"
         },
         "datasource": "InfluxDB",
-        "definition": "select alameda_scaler_namespace, enable_VPA from (select alameda_scaler_namespace, enable_VPA from alameda_cluster_status..container where 'Cluster' = '$resource' group by alameda_scaler_namespace),(select alameda_scaler_namespace, enable_VPA from alameda_cluster_status..container where 'Cluster' != '$resource' and alameda_scaler_namespace = '$ns' group by alameda_scaler_namespace)",
+        "definition": "select namespace, \"policy\" from (select namespace, \"policy\" from alameda_cluster_status..pod where 'Cluster' = '$resource' group by namespace),(select namespace, \"policy\" from alameda_cluster_status..pod where 'Cluster' != '$resource' and namespace = '$ns' group by namespace)",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "h_ns",
         "options": [],
-        "query": "select alameda_scaler_namespace, enable_VPA from (select alameda_scaler_namespace, enable_VPA from alameda_cluster_status..container where 'Cluster' = '$resource' group by alameda_scaler_namespace),(select alameda_scaler_namespace, enable_VPA from alameda_cluster_status..container where 'Cluster' != '$resource' and alameda_scaler_namespace = '$ns' group by alameda_scaler_namespace)",
+        "query": "select namespace, \"policy\" from (select namespace, \"policy\" from alameda_cluster_status..pod where 'Cluster' = '$resource' group by namespace),(select namespace, \"policy\" from alameda_cluster_status..pod where 'Cluster' != '$resource' and namespace = '$ns' group by namespace)",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3634,14 +4036,14 @@
           "value": "$__all"
         },
         "datasource": "InfluxDB",
-        "definition": "select alameda_scaler_name, enable_VPA from ( select alameda_scaler_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\" =~ /^[[h_ns]]$/  and ('Cluster' = '$resource' or 'Namespace' = '$resource') group by alameda_scaler_name), ( select alameda_scaler_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\" ='$ns' and 'Cluster' != '$resource' and 'Namespace' != '$resource' group by alameda_scaler_name)",
+        "definition": "select alameda_scaler_name, \"policy\" from ( select alameda_scaler_name, \"policy\" from alameda_cluster_status..pod where \"namespace\" =~ /^[[h_ns]]$/  and ('Cluster' = '$resource' or 'Namespace' = '$resource') group by alameda_scaler_name), ( select alameda_scaler_name, \"policy\" from alameda_cluster_status..pod where \"namespace\" ='$ns' and 'Cluster' != '$resource' and 'Namespace' != '$resource' group by alameda_scaler_name)",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "h_scaler",
         "options": [],
-        "query": "select alameda_scaler_name, enable_VPA from ( select alameda_scaler_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\" =~ /^[[h_ns]]$/  and ('Cluster' = '$resource' or 'Namespace' = '$resource') group by alameda_scaler_name), ( select alameda_scaler_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\" ='$ns' and 'Cluster' != '$resource' and 'Namespace' != '$resource' group by alameda_scaler_name)",
+        "query": "select alameda_scaler_name, \"policy\" from ( select alameda_scaler_name, \"policy\" from alameda_cluster_status..pod where \"namespace\" =~ /^[[h_ns]]$/  and ('Cluster' = '$resource' or 'Namespace' = '$resource') group by alameda_scaler_name), ( select alameda_scaler_name, \"policy\" from alameda_cluster_status..pod where \"namespace\" ='$ns' and 'Cluster' != '$resource' and 'Namespace' != '$resource' group by alameda_scaler_name)",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3659,14 +4061,14 @@
           "value": "$__all"
         },
         "datasource": "InfluxDB",
-        "definition": "select pod_name, enable_VPA from (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"=~ /^[[h_ns]]$/ and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Cluster' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Namespace' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and 'Application' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" = '$pod' and 'Container' = '$resource')",
+        "definition": "select \"name\", \"policy\" from (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"=~ /^[[h_ns]]$/ and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Cluster' = '$resource'), (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"= '$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Namespace' = '$resource'), (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and 'Application' = '$resource'), (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and \"name\" = '$pod' and 'Container' = '$resource')",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "h_pod",
         "options": [],
-        "query": "select pod_name, enable_VPA from (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"=~ /^[[h_ns]]$/ and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Cluster' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Namespace' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and 'Application' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" = '$pod' and 'Container' = '$resource')",
+        "query": "select \"name\", \"policy\" from (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"=~ /^[[h_ns]]$/ and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Cluster' = '$resource'), (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"= '$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Namespace' = '$resource'), (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and 'Application' = '$resource'), (select \"name\", \"policy\" from alameda_cluster_status..pod where \"namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and \"name\" = '$pod' and 'Container' = '$resource')",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3684,14 +4086,14 @@
           "value": "$__all"
         },
         "datasource": "InfluxDB",
-        "definition": "select \"name\", enable_VPA from (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"=~ /^[[h_ns]]$/and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and 'Cluster' = '$resource'), (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"='$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and 'Namespace' = '$resource'), (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"='$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" =~ /^[[h_pod]]$/ and 'Application' = '$resource'), (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"='$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" ='$h_pod' and \"name\" = '$container' and 'Container' = '$resource')",
+        "definition": "select \"name\", restart_count from (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and 'Cluster' = '$resource'), (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and 'Namespace' = '$resource'), (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and 'Application' = '$resource'), (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" ='$h_pod' and \"name\" = '$container' and 'Container' = '$resource')",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "h_container",
         "options": [],
-        "query": "select \"name\", enable_VPA from (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"=~ /^[[h_ns]]$/and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and 'Cluster' = '$resource'), (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"='$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and \"pod_name\" =~ /^[[h_pod]]$/ and 'Namespace' = '$resource'), (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"='$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" =~ /^[[h_pod]]$/ and 'Application' = '$resource'), (select \"name\", enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"='$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" ='$h_pod' and \"name\" = '$container' and 'Container' = '$resource')",
+        "query": "select \"name\", restart_count from (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and 'Cluster' = '$resource'), (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and 'Namespace' = '$resource'), (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and 'Application' = '$resource'), (select \"name\", restart_count from alameda_cluster_status..container where \"pod_name\" ='$h_pod' and \"name\" = '$container' and 'Container' = '$resource')",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3706,8 +4108,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570100935",
-          "value": "1570100935"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'aws'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2d  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3732,8 +4134,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570144151",
-          "value": "1570144151"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '21600' and provider = 'aws'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-12h  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3758,8 +4160,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570158548",
-          "value": "1570158548"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '3600' and provider = 'aws'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2h  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3784,8 +4186,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570100935",
-          "value": "1570100935"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'azure'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2d  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3809,9 +4211,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "1570144151",
-          "value": "1570144151"
+          "isNone": true,
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '21600' and provider = 'azure'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-12h  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3836,8 +4238,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570158548",
-          "value": "1570158548"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '3600' and provider = 'azure'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2h  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3862,18 +4264,18 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570100935",
-          "value": "1570100935"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'azure'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2d  and time <= now() and country = '$country' order by time desc limit 1",
+        "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'gcp'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2d  and time <= now() and country = '$country' order by time desc limit 1",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "gcp_stime_month",
         "options": [],
-        "query": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'azure'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2d  and time <= now() and country = '$country' order by time desc limit 1",
+        "query": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'gcp'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2d  and time <= now() and country = '$country' order by time desc limit 1",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -3888,8 +4290,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570144151",
-          "value": "1570144151"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '21600' and provider = 'gcp'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-12h  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3914,8 +4316,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1570158548",
-          "value": "1570158548"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..recommendation_jeri where granularity = '3600' and provider = 'gcp'  and ((\"reservedinstances\" = '0' and 'No' = '$purchase_option') or (\"reservedinstances\" = '1' and 'Yes' = '$purchase_option')) and time >= now()-2h  and time <= now() and country = '$country' order by time desc limit 1",
@@ -3940,18 +4342,18 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "17",
-          "value": "17"
+          "text": "2",
+          "value": "2"
         },
         "datasource": "InfluxDB",
-        "definition": "select count(pod_name) from (select pod_name, enable_VPA from (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"=~ /^[[h_ns]]$/ and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Cluster' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Namespace' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and 'Application' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" = '$pod' and 'Container' = '$resource'))",
+        "definition": "select count(pod_name) from (select pod_name, resource_request_cpu from (select pod_name, resource_request_cpu from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and ('Cluster' = '$resource' or 'Namespace' = '$resource' or 'Application' = '$resource')), (select pod_name, resource_request_cpu from alameda_cluster_status..container where \"pod_name\" = '$pod' and 'Container' = '$resource'))",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "count_container",
         "options": [],
-        "query": "select count(pod_name) from (select pod_name, enable_VPA from (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"=~ /^[[h_ns]]$/ and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Cluster' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" =~ /^[[h_scaler]]$/ and 'Namespace' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and 'Application' = '$resource'), (select pod_name, enable_VPA from alameda_cluster_status..container where \"alameda_scaler_namespace\"= '$ns' and \"alameda_scaler_name\" ='$scaler' and \"pod_name\" = '$pod' and 'Container' = '$resource'))",
+        "query": "select count(pod_name) from (select pod_name, resource_request_cpu from (select pod_name, resource_request_cpu from alameda_cluster_status..container where \"pod_name\" =~ /^[[h_pod]]$/ and ('Cluster' = '$resource' or 'Namespace' = '$resource' or 'Application' = '$resource')), (select pod_name, resource_request_cpu from alameda_cluster_status..container where \"pod_name\" = '$pod' and 'Container' = '$resource'))",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -4045,14 +4447,40 @@
           "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "select sum(totalcost) as totalcost from alameda_fedemeter..calculate_instance where time >= now() -60m group by time(1s) fill(none) order by time desc limit 1",
+        "definition": "select last(starttime) from alameda_fedemeter..calculate_instance where time >= now() - 2h ",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "current_cost_starttime",
+        "options": [],
+        "query": "select last(starttime) from alameda_fedemeter..calculate_instance where time >= now() - 2h ",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "isNone": true,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": "InfluxDB",
+        "definition": "select totalcost from alameda_fedemeter..calculate_instance where starttime = $current_cost_starttime + 0",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "current_cost",
         "options": [],
-        "query": "select sum(totalcost) as totalcost from alameda_fedemeter..calculate_instance where time >= now() -60m group by time(1s) fill(none) order by time desc limit 1",
+        "query": "select totalcost from alameda_fedemeter..calculate_instance where starttime = $current_cost_starttime + 0",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -4379,8 +4807,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "647.993424",
-          "value": "647.993424"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select sum(totalcost) from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'aws' and starttime = '$aws_stime_month' and ( ( \"reservedinstances\" = '1' and 'Yes' = '$purchase_option')  or ( \"reservedinstances\" = '0' and 'No' = '$purchase_option') ) and country = '$country' ",
@@ -4405,8 +4833,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "478.803748",
-          "value": "478.803748"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select  sum(totalcost) from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'azure' and starttime = '$azure_stime_month' and ( ( \"reservedinstances\" = '1' and 'Yes' = '$purchase_option')  or ( \"reservedinstances\" = '0' and 'No' = '$purchase_option') ) and country = '$country' ",
@@ -4431,8 +4859,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "430.31737",
-          "value": "430.31737"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select sum(totalcost) from alameda_fedemeter..recommendation_jeri where granularity = '86400' and provider = 'gcp' and starttime = '$gcp_stime_month' and ( ( \"reservedinstances\" = '1' and 'Yes' = '$purchase_option')  or ( \"reservedinstances\" = '0' and 'No' = '$purchase_option') ) and country = '$country'",
@@ -4534,18 +4962,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "100",
-          "value": "100"
+          "text": "6",
+          "value": "6"
         },
         "datasource": "InfluxDB",
-        "definition": "select  sum(node_cpu_cores)*10 from alameda_cluster_status..node",
+        "definition": "select sum(node_cpu_cores) from alameda_cluster_status..node",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "current_cpu_total",
         "options": [],
-        "query": "select  sum(node_cpu_cores)*10 from alameda_cluster_status..node",
+        "query": "select sum(node_cpu_cores) from alameda_cluster_status..node",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -4559,8 +4987,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "19804012544",
-          "value": "19804012544"
+          "text": "16656842752",
+          "value": "16656842752"
         },
         "datasource": "InfluxDB",
         "definition": "select  sum(node_memory_bytes) from alameda_cluster_status..node",
@@ -4571,6 +4999,58 @@
         "name": "current_memory_total",
         "options": [],
         "query": "select  sum(node_memory_bytes) from alameda_cluster_status..node",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "isNone": true,
+          "selected": true,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": "InfluxDB",
+        "definition": "select preloader from alameda_metric..grafana_config order by time desc limit 1",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Preloader",
+        "multi": false,
+        "name": "preloader",
+        "options": [],
+        "query": "select preloader from alameda_metric..grafana_config order by time desc limit 1",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "InfluxDB",
+        "definition": "show tag values on alameda_cluster_status from node with key = \"name\" where 'Cluster' = '$resource' and ('false' = '$preloader' or '' = '$preloader')",
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "name": "node",
+        "options": [],
+        "query": "show tag values on alameda_cluster_status from node with key = \"name\" where 'Cluster' = '$resource' and ('false' = '$preloader' or '' = '$preloader')",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,

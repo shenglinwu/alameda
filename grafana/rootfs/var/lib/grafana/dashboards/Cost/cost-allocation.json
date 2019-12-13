@@ -1,23 +1,27 @@
 {
   "annotations": {
-    "list": [{
-      "builtIn": 1,
-      "datasource": "-- Grafana --",
-      "enable": true,
-      "hide": true,
-      "iconColor": "rgba(0, 211, 255, 1)",
-      "name": "Annotations & Alerts",
-      "type": "dashboard"
-    }]
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
   },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 23,
-  "iteration": 1569234314365,
+  "id": 17,
+  "iteration": 1576205256746,
   "links": [],
-  "panels": [{
+  "panels": [
+    {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -31,6 +35,7 @@
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <img id=\"config_provider\" style=\"display:block; margin-left:auto; margin-right:auto;\">\n    </td>\n  </tr>\n</table>\n<script>\n  var currentProvider = `${current_provider}`.toLowerCase();\n  if (currentProvider === 'aws') {\n    document.getElementById('config_provider').src = 'https://d1.awsstatic.com/gamedev/gamelift/awshomepage.8845ec5b83a849d57f677cf9010c25abd357ea2e.PNG';\n    document.getElementById('config_provider').style.height = '41%';\n  } else if ( currentProvider === 'azure') {\n    document.getElementById('config_provider').src = 'https://www.net4all.ch/wp-content/uploads/sites/4/2018/04/azure-logo_200x200.png';\n    document.getElementById('config_provider').style.height = '50%';\n    document.getElementById('config_provider').style.width = '50%';\n  } else if ( currentProvider === 'gcp') {\n    document.getElementById('config_provider').src = 'https://miro.medium.com/max/1200/1*eSQnSxgOwNWtjsnbBl3w4A.png';\n    document.getElementById('config_provider').style.height = '40%';\n  }\n  //document.getElementById('config_provider').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'black'\n</script>\n",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -40,11 +45,13 @@
       "id": 4,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Current Provider",
       "type": "text"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"config_cost\" type=\"text/JavaScript\" style=\"text-align:center;font-size:30px; color:black\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var cost = `$${$current_cost.toFixed(2)}<div style=\"font-size:18px; color:black\">per month</div>`;\n  document.getElementById('config_cost').innerHTML = cost;\n  document.getElementById('config_cost').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor = 'cadetblue';\n</script>\n<style>\n .markdown-html table {\n  border: none !important\n}\n .markdown-html tr {\n  border: none !important\n}\n .markdown-html td {\n  border: none !important\n}\n </style>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -54,11 +61,13 @@
       "id": 6,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Current Cost",
       "type": "text"
     },
     {
       "content": "<table style=\"height:100%;width:100%\">\n  <tr>\n    <td>\n      <div id=\"config_region\" type=\"text/JavaScript\" style=\"text-align:center;font-size:20px\"></div>\n    </td>\n  </tr>\n</table>\n<script>\n  var region = `${current_region}`;\n  document.getElementById('config_region').innerHTML = region;\n</script>",
+      "datasource": null,
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -68,6 +77,7 @@
       "id": 18,
       "links": [],
       "mode": "html",
+      "options": {},
       "title": "Region",
       "type": "text"
     },
@@ -83,6 +93,7 @@
       },
       "id": 20,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -90,7 +101,8 @@
         "col": 0,
         "desc": true
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -194,53 +206,79 @@
           "unit": "short"
         }
       ],
-      "targets": [{
-        "expr": "",
-        "format": "table",
-        "groupBy": [{
-            "params": ["$__interval"],
-            "type": "time"
-          },
-          {
-            "params": ["null"],
-            "type": "fill"
-          }
-        ],
-        "intervalFactor": 1,
-        "orderByTime": "ASC",
-        "policy": "default",
-        "query": "select  \"name\", io_role, io_instance_type, node_cpu_cores, node_memory_bytes, io_storage_size from alameda_cluster_status..node\n",
-        "rawQuery": true,
-        "refId": "A",
-        "resultFormat": "table",
-        "select": [
-          [{
-              "params": ["value"],
-              "type": "field"
+      "targets": [
+        {
+          "expr": "",
+          "format": "table",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
             },
             {
-              "params": [],
-              "type": "mean"
+              "params": [
+                "null"
+              ],
+              "type": "fill"
             }
-          ]
-        ],
-        "tags": []
-      }],
+          ],
+          "intervalFactor": 1,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select  \"name\", io_role, io_instance_type, node_cpu_cores, node_memory_bytes, io_storage_size from alameda_cluster_status..node\n",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
       "title": "Current Cluster Configuration",
       "transform": "table",
       "type": "table"
     },
     {
+      "content": "<script>\n  $('#panel-12 .table-panel-table tbody').on('DOMSubtreeModified', function() {\n    var dataLength = this.children.length;\n    if (dataLength > 0) {\n      for(var i = 0; i < dataLength; i++) {\n        if (this.children[i].innerText.indexOf('idle') !== -1) {\n          this.children[i].style.backgroundColor = '#3f6833';\n        }\n      }\n    }\n  });\n  \n  $('#panel-48 .table-panel-table tbody').on('DOMSubtreeModified', function() {\n    var dataLength = this.children.length;\n    if (dataLength > 0) {\n      for(var i = 0; i < dataLength; i++) {\n        if (this.children[i].innerText.indexOf('idle') !== -1) {\n          this.children[i].style.backgroundColor = '#3f6833';\n        }\n      }\n    }\n  });\n</script>\n<style>\n  #panel-36 {\n   display:none\n  }\n\n  .pieLabel > div {\n   color: white !important;\n  }\n </style>",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "id": 36,
+      "mode": "html",
+      "options": {},
+      "title": "Panel Title",
+      "type": "text"
+    },
+    {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 6
       },
       "id": 10,
       "panels": [],
-      "title": "Current Resource Expense",
+      "title": "Current Resource Cost",
       "type": "row"
     },
     {
@@ -250,11 +288,12 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 7,
         "x": 0,
-        "y": 6
+        "y": 7
       },
       "id": 38,
       "legend": {
@@ -270,6 +309,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -278,16 +320,61 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
-          "alias": "$tag_namespacename",
-          "expr": "",
-          "format": "time_series",
-          "groupBy": [{
-              "params": ["$__interval"],
+      "targets": [
+        {
+          "alias": "idle",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select sum from (select 100 - sum(costpercentage) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5]]$/ and starttime = '$ns_starttime' group by time(3600s)) where sum >= 0",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "alias": "$tag_namespacename",
+          "expr": "",
+          "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -300,39 +387,11 @@
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
-                "type": "field"
-              },
+            [
               {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "Idleness",
-          "groupBy": [{
-              "params": ["$__interval"],
-              "type": "time"
-            },
-            {
-              "params": ["null"],
-              "type": "fill"
-            }
-          ],
-          "hide": false,
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "select 100 - sum(costpercentage) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5]]$/ and starttime = '$ns_starttime' group by time(3600s)",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [{
-                "params": ["value"],
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -360,15 +419,18 @@
         "mode": "series",
         "name": null,
         "show": true,
-        "values": ["current"]
+        "values": [
+          "current"
+        ]
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 1,
           "format": "percent",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
+          "max": "100",
+          "min": "0",
           "show": true
         },
         {
@@ -392,11 +454,12 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 7,
         "x": 7,
-        "y": 6
+        "y": 7
       },
       "id": 47,
       "legend": {
@@ -412,6 +475,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
@@ -420,40 +486,50 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
-        "alias": "$tag_appname",
-        "expr": "",
-        "format": "time_series",
-        "groupBy": [{
-            "params": ["$__interval"],
-            "type": "time"
-          },
-          {
-            "params": ["null"],
-            "type": "fill"
-          }
-        ],
-        "hide": false,
-        "intervalFactor": 1,
-        "orderByTime": "ASC",
-        "policy": "default",
-        "query": "select mean(costpercentage) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and appname =~ /^[[app_top_5]]$/ and starttime = '$app_starttime' and namespacename = '$ns' group by appname, time(3600s)",
-        "rawQuery": true,
-        "refId": "A",
-        "resultFormat": "time_series",
-        "select": [
-          [{
-              "params": ["value"],
-              "type": "field"
+      "targets": [
+        {
+          "alias": "$tag_appname",
+          "expr": "",
+          "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
             },
             {
-              "params": [],
-              "type": "mean"
+              "params": [
+                "null"
+              ],
+              "type": "fill"
             }
-          ]
-        ],
-        "tags": []
-      }],
+          ],
+          "hide": false,
+          "intervalFactor": 1,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select mean(costpercentage) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and appname =~ /^[[app_top_5]]$/ and starttime = '$app_starttime' and namespacename = '$ns' group by appname, time(3600s)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
@@ -470,15 +546,18 @@
         "mode": "series",
         "name": null,
         "show": true,
-        "values": ["current"]
+        "values": [
+          "current"
+        ]
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 1,
           "format": "percent",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
+          "max": "100",
+          "min": "0",
           "show": true
         },
         {
@@ -503,10 +582,11 @@
         "h": 7,
         "w": 10,
         "x": 14,
-        "y": 6
+        "y": 7
       },
       "id": 12,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -514,7 +594,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -535,10 +616,12 @@
           "thresholds": [],
           "type": "string",
           "unit": "short",
-          "valueMaps": [{
-            "text": "Idleness",
-            "value": "null"
-          }]
+          "valueMaps": [
+            {
+              "text": "idle",
+              "value": "null"
+            }
+          ]
         },
         {
           "alias": "Cost Percentage",
@@ -565,12 +648,12 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
+          "decimals": 3,
           "mappingType": 1,
           "pattern": "workloadcost",
           "thresholds": [],
           "type": "number",
-          "unit": "none"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -587,16 +670,22 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "datasource": "InfluxDB",
           "expr": "",
           "format": "table",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -604,13 +693,16 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select last(\"\") as namespacename, 100 - sum(costpercentage) as costpercentage, ($current_cost / 730) - sum(workloadcost) as workloadcost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5]]$/ and starttime = '$ns_starttime' ",
+          "query": "select last(\"\") as namespacename, 100 - sum(costpercentage) as costpercentage, (($current_cost + 0) / 730) - sum(workloadcost) as workloadcost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5]]$/ and starttime = '$ns_starttime' ",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -623,12 +715,17 @@
         },
         {
           "datasource": "InfluxDB",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -640,8 +737,11 @@
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -664,11 +764,12 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "hideTimeOverride": true,
       "id": 42,
@@ -685,11 +786,15 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [{
+      "seriesOverrides": [
+        {
           "alias": "/(observation)/",
           "dashLength": 5,
           "linewidth": 2,
@@ -706,16 +811,22 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
+      "targets": [
+        {
           "alias": "$tag_namespacename(observation)",
           "expr": "",
           "format": "time_series",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -727,8 +838,11 @@
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -741,12 +855,17 @@
         },
         {
           "alias": "$tag_namespacename(prediction)",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -757,8 +876,11 @@
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -774,7 +896,7 @@
       "timeFrom": "5d",
       "timeRegions": [],
       "timeShift": "0d+1d",
-      "title": "Cost: Observation, and Prediction",
+      "title": "Cost Per Hour: Observation, and Prediction",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -788,7 +910,8 @@
         "show": true,
         "values": []
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 2,
           "format": "currencyUSD",
           "label": null,
@@ -813,11 +936,12 @@
     },
     {
       "collapsed": false,
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 44,
       "panels": [],
@@ -826,7 +950,7 @@
     },
     {
       "aliasColors": {
-        "Idleness": "#3f6833"
+        "idle": "#3f6833"
       },
       "breakPoint": "50%",
       "cacheTimeout": null,
@@ -837,52 +961,60 @@
       "datasource": "-- Mixed --",
       "decimals": null,
       "fontSize": "100%",
-      "format": "none",
+      "format": "currencyUSD",
       "gridPos": {
         "h": 8,
         "w": 7,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 8,
       "interval": null,
       "legend": {
         "header": "",
         "percentage": true,
+        "percentageDecimals": 2,
         "show": true,
         "values": false
       },
-      "legendType": "On graph",
+      "legendType": "Right side",
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
+      "options": {},
       "pieType": "pie",
       "strokeWidth": "1",
-      "targets": [{
-          "alias": "$tag_namespacename",
+      "targets": [
+        {
+          "alias": "idle",
           "datasource": "InfluxDB",
-          "expr": "",
-          "format": "time_series",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
           "hide": false,
-          "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select sum(workloadcost) * 730 * 100 / $count_of_hourlycost / $current_cost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter group by namespacename",
+          "query": "select sum from (select ((($current_cost + 0) * ($count_of_hourlycost + 0)) / 730) - sum(workloadcost) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter) where sum >= 0",
           "rawQuery": true,
-          "refId": "A",
+          "refId": "B",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -894,27 +1026,38 @@
           "tags": []
         },
         {
-          "alias": "Idleness",
+          "alias": "$tag_namespacename",
           "datasource": "InfluxDB",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "expr": "",
+          "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
           "hide": false,
+          "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select 100 - (sum(workloadcost) * 730 * 100 / $count_of_hourlycost / $current_cost) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter",
+          "query": "select sum(workloadcost) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter group by namespacename",
           "rawQuery": true,
-          "refId": "B",
+          "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -942,59 +1085,71 @@
       },
       "datasource": "InfluxDB",
       "fontSize": "100%",
-      "format": "none",
+      "format": "currencyUSD",
       "gridPos": {
         "h": 8,
         "w": 7,
         "x": 7,
-        "y": 22
+        "y": 23
       },
       "id": 30,
       "interval": null,
       "legend": {
         "percentage": true,
+        "percentageDecimals": 2,
         "show": true,
         "values": false
       },
-      "legendType": "On graph",
+      "legendType": "Right side",
       "links": [],
       "maxDataPoints": 3,
       "nullPointMode": "connected",
+      "options": {},
       "pieType": "pie",
       "strokeWidth": 1,
-      "targets": [{
-        "alias": "$tag_appname",
-        "expr": "",
-        "format": "time_series",
-        "groupBy": [{
-            "params": ["$__interval"],
-            "type": "time"
-          },
-          {
-            "params": ["null"],
-            "type": "fill"
-          }
-        ],
-        "intervalFactor": 1,
-        "orderByTime": "ASC",
-        "policy": "default",
-        "query": "select sum(workloadcost) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and appname =~ /^[[app_top_5_monthly]]$/ and $timeFilter and namespacename = '$ns' group by appname",
-        "rawQuery": true,
-        "refId": "A",
-        "resultFormat": "time_series",
-        "select": [
-          [{
-              "params": ["value"],
-              "type": "field"
+      "targets": [
+        {
+          "alias": "$tag_appname",
+          "expr": "",
+          "format": "time_series",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
             },
             {
-              "params": [],
-              "type": "mean"
+              "params": [
+                "null"
+              ],
+              "type": "fill"
             }
-          ]
-        ],
-        "tags": []
-      }],
+          ],
+          "intervalFactor": 1,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "select sum(workloadcost) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and appname =~ /^[[app_top_5_monthly]]$/ and $timeFilter and namespacename = '$ns' group by appname",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
       "title": "Application Cost Percentage - $ns",
       "type": "grafana-piechart-panel",
       "valueName": "current"
@@ -1007,10 +1162,11 @@
         "h": 8,
         "w": 10,
         "x": 14,
-        "y": 22
+        "y": 23
       },
       "id": 48,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
@@ -1018,7 +1174,8 @@
         "col": null,
         "desc": false
       },
-      "styles": [{
+      "styles": [
+        {
           "alias": "Time",
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "pattern": "Time",
@@ -1039,10 +1196,12 @@
           "thresholds": [],
           "type": "string",
           "unit": "short",
-          "valueMaps": [{
-            "text": "Idleness",
-            "value": "null"
-          }]
+          "valueMaps": [
+            {
+              "text": "idle",
+              "value": "null"
+            }
+          ]
         },
         {
           "alias": "Cost Percentage",
@@ -1069,12 +1228,12 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
-          "decimals": 2,
+          "decimals": 3,
           "mappingType": 1,
           "pattern": "workloadcost",
           "thresholds": [],
           "type": "number",
-          "unit": "none"
+          "unit": "currencyUSD"
         },
         {
           "alias": "",
@@ -1091,16 +1250,22 @@
           "unit": "short"
         }
       ],
-      "targets": [{
+      "targets": [
+        {
           "datasource": "InfluxDB",
           "expr": "",
           "format": "table",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -1108,13 +1273,16 @@
           "intervalFactor": 1,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select last(\"\") as namespacename, 100 - (sum(workloadcost) * 730 * 100 / $count_of_hourlycost / $current_cost) as costpercentage, ((100 - (sum(workloadcost) * 730 * 100 / $count_of_hourlycost / $current_cost)) / 100) * $count_of_hourlycost / 730 * $current_cost  as workloadcost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter",
+          "query": "select last(\"\") as namespacename, 100 - (sum(workloadcost) * 730 * 100 / ($count_of_hourlycost + 0) / ($current_cost + 0)) as costpercentage, ((100 - (sum(workloadcost) * 730 * 100 / ($count_of_hourlycost + 0) / ($current_cost + 0))) / 100) * ($count_of_hourlycost + 0) / 730 * ($current_cost + 0 )  as workloadcost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -1127,25 +1295,33 @@
         },
         {
           "datasource": "InfluxDB",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
           "hide": false,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select sum(workloadcost) * 730 * 100 / $count_of_hourlycost / $current_cost as costpercentage, sum(workloadcost) as  workloadcost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter group by namespacename",
+          "query": "select sum(workloadcost) * 730 * 100 / ($count_of_hourlycost + 0) / ($current_cost + 0) as costpercentage, sum(workloadcost) as  workloadcost from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and namespacename =~ /^[[ns_top_5_monthly]]$/ and $timeFilter group by namespacename",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "table",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -1168,11 +1344,12 @@
       "dashes": false,
       "datasource": "InfluxDB",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 31
       },
       "hideTimeOverride": false,
       "id": 46,
@@ -1189,11 +1366,15 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "percentage": false,
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [{
+      "seriesOverrides": [
+        {
           "alias": "/(observation)/",
           "dashLength": 5,
           "linewidth": 2,
@@ -1210,16 +1391,22 @@
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
-      "targets": [{
+      "targets": [
+        {
           "alias": "$tag_namespacename",
           "expr": "",
           "format": "time_series",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
@@ -1232,8 +1419,11 @@
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -1246,25 +1436,33 @@
         },
         {
           "alias": "$tag_namespacename(prediction)",
-          "groupBy": [{
-              "params": ["$__interval"],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
               "type": "time"
             },
             {
-              "params": ["null"],
+              "params": [
+                "null"
+              ],
               "type": "fill"
             }
           ],
           "hide": false,
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "select history + prediction from (select sum(workloadcost) as history from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and $timeFilter group by namespacename),\n(select cumulative_sum(workloadcost) as prediction from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '1' and $timeFilter and time >= now() group by namespacename) group by namespacename fill(previous)",
+          "query": "select history + prediction from (select sum(workloadcost) as history from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and $timeFilter group by namespacename),\n(select cumulative_sum(workloadcost) as prediction from alameda_fedemeter..cost_namespace where granularity = '86400' and type = '1' and $timeFilter and time >= now() group by namespacename) group by namespacename fill(previous)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
-            [{
-                "params": ["value"],
+            [
+              {
+                "params": [
+                  "value"
+                ],
                 "type": "field"
               },
               {
@@ -1294,7 +1492,8 @@
         "show": true,
         "values": []
       },
-      "yaxes": [{
+      "yaxes": [
+        {
           "decimals": 2,
           "format": "currencyUSD",
           "label": null,
@@ -1316,41 +1515,29 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "content": "<script>\n  $('#panel-12 .table-panel-table tbody').on('DOMSubtreeModified', function() {\n    var dataLength = this.children.length;\n    if (dataLength > 0) {\n      for(var i = 0; i < dataLength; i++) {\n        if (this.children[i].innerText.indexOf('Idleness') !== -1) {\n          this.children[i].style.backgroundColor = '#3f6833';\n        }\n      }\n    }\n  });\n  \n  $('#panel-48 .table-panel-table tbody').on('DOMSubtreeModified', function() {\n    var dataLength = this.children.length;\n    if (dataLength > 0) {\n      for(var i = 0; i < dataLength; i++) {\n        if (this.children[i].innerText.indexOf('Idleness') !== -1) {\n          this.children[i].style.backgroundColor = '#3f6833';\n        }\n      }\n    }\n  });\n</script>\n<style>\n  #panel-36 {\n   display:none\n  }\n\n  .pieLabel > div {\n   color: white !important;\n  }\n </style>",
-      "gridPos": {
-        "h": 1,
-        "w": 12,
-        "x": 0,
-        "y": 38
-      },
-      "id": 36,
-      "mode": "html",
-      "title": "Panel Title",
-      "type": "text"
     }
   ],
   "refresh": "5m",
-  "schemaVersion": 16,
+  "schemaVersion": 20,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": [{
+    "list": [
+      {
         "allValue": null,
         "current": {
-          "text": "federatorai-demo",
-          "value": "federatorai-demo"
+          "text": "default",
+          "value": "default"
         },
         "datasource": "InfluxDB",
-        "definition": "show tag values on alameda_fedemeter from cost_app with key = \"namespacename\" where granularity = '3600' and type = '0' and time >= now()-1h",
+        "definition": "show tag values on alameda_cluster_status from namespace with key = \"name\"",
         "hide": 0,
         "includeAll": false,
         "label": "Namespace",
         "multi": false,
         "name": "ns",
         "options": [],
-        "query": "show tag values on alameda_fedemeter from cost_app with key = \"namespacename\" where granularity = '3600' and type = '0' and time >= now()-1h",
+        "query": "show tag values on alameda_cluster_status from namespace with key = \"name\"",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1389,9 +1576,8 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": "1573530880",
-          "value": "1573530880"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select starttime from alameda_fedemeter..calculate_instance where time >= now() -2h and  granularity = '3600' order by time desc limit 1 ",
@@ -1415,18 +1601,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "636.4",
-          "value": "636.4"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "select sum(totalcost) as totalcost from alameda_fedemeter..calculate_instance where starttime = $current_cost_starttime",
+        "definition": "select sum(totalcost) as totalcost from alameda_fedemeter..calculate_instance where starttime = $current_cost_starttime fill(0)",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "current_cost",
         "options": [],
-        "query": "select sum(totalcost) as totalcost from alameda_fedemeter..calculate_instance where starttime = $current_cost_starttime",
+        "query": "select sum(totalcost) as totalcost from alameda_fedemeter..calculate_instance where starttime = $current_cost_starttime fill(0)",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1465,8 +1651,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1573520400",
-          "value": "1573520400"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select last(starttime) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and time >= now() -2h ",
@@ -1490,18 +1676,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "1573520400",
-          "value": "1573520400"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and time >= now() -2h ",
+        "definition": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and time >= now() -2h and namespacename = '$ns'",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "app_starttime",
         "options": [],
-        "query": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and time >= now() -2h ",
+        "query": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and time >= now() -2h and namespacename = '$ns'",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1544,14 +1730,14 @@
           "value": "$__all"
         },
         "datasource": "InfluxDB",
-        "definition": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and starttime = '$app_starttime')",
+        "definition": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and starttime = '$app_starttime' and namespacename = '$ns')",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "app_top_5",
         "options": [],
-        "query": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and starttime = '$app_starttime')",
+        "query": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '3600' and type = '0' and starttime = '$app_starttime' and namespacename = '$ns')",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1565,8 +1751,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1573516800",
-          "value": "1573516800"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
         "definition": "select last(starttime) from alameda_fedemeter..cost_namespace where granularity = '86400' and type = '0' and time >= now() -2d",
@@ -1590,18 +1776,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "1573430400",
-          "value": "1573430400"
+          "text": "None",
+          "value": ""
         },
         "datasource": "InfluxDB",
-        "definition": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and time >= now() -2d",
+        "definition": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and time >= now() -2d and namespacename = '$ns'",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "app_starttime_monthly",
         "options": [],
-        "query": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and time >= now() -2d",
+        "query": "select last(starttime) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and time >= now() -2d and namespacename = '$ns'",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1644,14 +1830,14 @@
           "value": "$__all"
         },
         "datasource": "InfluxDB",
-        "definition": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and starttime = '$app_starttime_monthly')",
+        "definition": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and starttime = '$app_starttime_monthly' and namespacename = '$ns')",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
         "name": "app_top_5_monthly",
         "options": [],
-        "query": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and starttime = '$app_starttime_monthly')",
+        "query": "select appname from (select top(costpercentage, appname, 5) from alameda_fedemeter..cost_app where granularity = '86400' and type = '0' and starttime = '$app_starttime_monthly' and namespacename = '$ns')",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1665,18 +1851,18 @@
       {
         "allValue": null,
         "current": {
-          "text": "18",
-          "value": "18"
+          "text": "257",
+          "value": "257"
         },
         "datasource": "InfluxDB",
-        "definition": "select count(workloadcost) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and $timeFilter group by namespacename",
+        "definition": "select count(sum) -1 from (select sum(numMeasurements) from _internal..\"database\" where $timeFilter  and time <= now() group by time(3600s) fill(0));",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "count_of_hourlycost",
         "options": [],
-        "query": "select count(workloadcost) from alameda_fedemeter..cost_namespace where granularity = '3600' and type = '0' and $timeFilter group by namespacename",
+        "query": "select count(sum) -1 from (select sum(numMeasurements) from _internal..\"database\" where $timeFilter  and time <= now() group by time(3600s) fill(0));",
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
@@ -1706,10 +1892,20 @@
       "2h",
       "1d"
     ],
-    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
   },
   "timezone": "",
   "title": "Cost Allocation",
   "uid": "WLJFE_FWk",
-  "version": 33
+  "version": 2
 }

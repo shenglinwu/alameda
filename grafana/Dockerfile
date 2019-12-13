@@ -1,9 +1,11 @@
-FROM grafana/grafana:5.4.3
+FROM grafana/grafana:6.4.4
 
 ARG image_tag
 
 ENV APPHOME=/opt/prophetstor/federatorai/grafana \
-    APP_DEBUG=0
+    APP_DEBUG=0 \
+    AIHOME="/opt/alameda/alameda-datahub" \
+    GF_PANELS_DISABLE_SANITIZE_HTML=true
 
 COPY . /tmp/src
 
@@ -12,9 +14,15 @@ COPY . /tmp/src
 USER root
 RUN set -x \
     && id \
-    && apt-get update \
-    && apt-get install -y nano curl procps sqlite3 \
-    && apt-get autoremove -y && apt-get autoclean -y && rm -rf /var/lib/apt/lists/* 
+    && apk update \
+    && apk add --no-cache nano curl procps sqlite nginx \
+    && rm -rf /var/cache/apk/* \
+    && rm -fv /etc/nginx/conf.d/* \
+    && mv -fv /tmp/src/nginx.conf /etc/nginx/nginx.conf \
+    && mv -fv /tmp/src/ssl.crt /etc/nginx/ssl.crt \
+    && mv -fv /tmp/src/ssl.key /etc/nginx/ssl.key \
+    ## Need write permission on the following directories
+    && mkdir -p /var/tmp/nginx /var/lib/nginx && chmod -R 777 /var/log /var/tmp/nginx /var/lib/nginx /etc/nginx
 
 RUN set -x \
     ## Build
@@ -35,6 +43,8 @@ RUN set -x \
     ## The following lines startup script will add running user id into /etc/passwd
     && chmod g+w /etc/passwd \
     ## init scripts
+    && cp /tmp/src/xray.sh /xray.sh \
+    # && cp /tmp/src/version.txt ${AIHOME}/etc/version.txt \
     && cp /tmp/src/tini /sbin/tini && chmod 755 /sbin/tini \
     && cp /tmp/src/init.sh /init.sh && chmod 755 /init.sh \
     && rm -rf /tmp/src

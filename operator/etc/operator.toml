@@ -1,10 +1,9 @@
-exclude_namespaces = ["kube-public", "kube-service-catalog",
+[namespace_exclusion]
+namespaces = ["kube-public", "kube-service-catalog",
   "kube-system", "management-infra", "openshift",
-  "openshift-console", "openshift-infra", "openshift-logging",
-  "openshift-monitoring", "openshift-node", "openshift-sdn",
-  "openshift-template-service-broker", "openshift-web-console",
-  "kube-node-lease", "stackpoint-system", "openshift-ansible-service-broker"
+  "kube-node-lease", "stackpoint-system", "marketplace"
 ]
+namespace_regs = ["openshift-*"]
 
 [log]
 setLogcallers = true
@@ -20,9 +19,12 @@ address = "datahub.alameda.svc.cluster.local:50050"
 port = 50443
 validatingWebhookConfigName = "operator-k8s-admission-validation"
 certDir = "/tmp/k8s-webhook-server/cert/"
-  [k8sWebhookServer.service]
-  name = "operator-admission-service"
-  port = 443
 
-[podInfo]
-labelsFile = "/etc/podinfo/labels"
+  [k8sWebhookServer.admissionPaths]
+  validateDeployment = "/validate-autoscaling-containers-ai-v1-deployment"
+  validateDeploymentConfig = "/validate-autoscaling-containers-ai-v1-deploymentconfig"
+  
+  [k8sWebhookServer.service]
+  name = "alameda-operator-webhook-service"
+  port = 443
+  

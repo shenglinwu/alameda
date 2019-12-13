@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	autoscalingv1alpha1 "github.com/containers-ai/alameda/operator/pkg/apis/autoscaling/v1alpha1"
+	autoscalingv1alpha1 "github.com/containers-ai/alameda/operator/api/v1alpha1"
 	utilsresource "github.com/containers-ai/alameda/operator/pkg/utils/resources"
 	"github.com/containers-ai/alameda/pkg/utils"
 	logUtil "github.com/containers-ai/alameda/pkg/utils/log"
@@ -383,6 +383,7 @@ func (evictioner *Evictioner) listPodRecommendations(nowTimestamp int64) ([]*dat
 				ClusterName: evictioner.clusterID,
 			},
 		},
+		Kind: datahub_resources.Kind_KIND_UNDEFINED,
 		QueryCondition: &datahub_common.QueryCondition{
 			TimeRange: &datahub_common.TimeRange{
 				ApplyTime: &timestamp.Timestamp{
